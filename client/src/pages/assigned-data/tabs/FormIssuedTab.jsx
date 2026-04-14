@@ -51,7 +51,9 @@ export function FormIssuedTab({
                 <td>{row.contact}</td>
                 <td>{row.grade}</td>
                 <td>
-                  <span className="chip source-tag">{row.source}</span>
+                  <span className="chip source-tag" data-source={row.source}>
+                    {row.source}
+                  </span>
                 </td>
                 <td>
                   {row.active ? (

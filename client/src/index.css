@@ -728,6 +728,10 @@ table {
   padding: 0 14px;
   min-height: 36px;
   width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .stage-scroll .stage-tab {
@@ -834,6 +838,55 @@ table {
   background: #f9fafb;
   font-size: 12px;
   padding: 4px 10px;
+}
+
+.source-tag[data-source="Website"] {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.source-tag[data-source="Instagram"] {
+  border-color: #f9a8d4;
+  background: #fdf2f8;
+  color: #be185d;
+}
+
+.source-tag[data-source="Walk-in"] {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.source-tag[data-source="Reference"],
+.source-tag[data-source="Referral"] {
+  border-color: #d8b4fe;
+  background: #faf5ff;
+  color: #7e22ce;
+}
+
+.source-tag[data-source="Facebook"] {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.source-tag[data-source="Google Ads"] {
+  border-color: #fcd34d;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.source-tag[data-source="YouTube"] {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.source-tag[data-source="WhatsApp Campaign"] {
+  border-color: #86efac;
+  background: #ecfdf5;
+  color: #047857;
 }
 
 .call-btn {
