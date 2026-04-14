@@ -682,7 +682,7 @@ function LostLeadModal({ onClose }) {
 function ReportsView({ onOpenMobileDashboard, onOpenMobileKanban }) {
   const funnel = [
     { label: "Lead", value: 47, pct: "100%", tone: "#2563eb" },
-    { label: "Contacted", value: 38, pct: "81%", tone: "#4f46e5" },
+    // { label: "Contacted", value: 38, pct: "81%", tone: "#4f46e5" },
     { label: "Nurturing", value: 27, pct: "57%", tone: "#0d9488" },
     { label: "Visit Scheduled", value: 18, pct: "38%", tone: "#f59e0b" },
     { label: "Visit Completed", value: 14, pct: "30%", tone: "#ea580c" },
@@ -998,14 +998,14 @@ function LeadDetailView({
 }) {
   const steps = [
     { label: "Lead", state: "done" },
-    { label: "Contacted", state: "done" },
+    // { label: "Contacted", state: "done" },
     { label: "Nurturing", state: "active" },
     { label: "Visit Scheduled", state: "todo" },
-    { label: "Visit Completed", state: "todo" },
-    { label: "Form Issued", state: "todo" },
     { label: "Unsuccessful", state: "todo" },
     { label: "Dead Leads", state: "todo" },
-    { label: "Converted", state: "todo" },
+    // { label: "Visit Completed", state: "todo" },
+    // { label: "Form Issued", state: "todo" },
+    // { label: "Converted", state: "todo" },
   ];
 
   return (
@@ -1438,13 +1438,13 @@ const callTags = [
 ];
 
 const callStatuses = [
-  "Contacted",
+  // "Contacted",
   "Nurturing",
-  "Visit Completed",
-  "Form Issued",
   "Unsuccessful",
   "Dead Leads",
-  "Converted",
+  // "Visit Completed",
+  // "Form Issued",
+  // "Converted",
 ];
 
 const autoStatusByTag = {
@@ -1478,28 +1478,28 @@ const mockCallLogs = [
       "Spoke with father. Interested in visiting campus next week. Will call back on Monday to confirm date.",
     templateSent: "Welcome Message",
   },
-  {
-    id: 2,
-    date: "11/04/2026",
-    time: "10:15 AM",
-    status: "Contacted",
-    tag: "Will think",
-    duration: "8 mins 20 secs",
-    remarks:
-      "Reached parent. Explained CBSE curriculum and sports facilities. Parent interested in fee structure details.",
-    templateSent: "Brochure Sharing",
-  },
-  {
-    id: 3,
-    date: "08/04/2026",
-    time: "03:45 PM",
-    status: "Contacted",
-    tag: "Interested",
-    duration: "15 mins 10 secs",
-    remarks:
-      "First contact successful. Parent enquired about Grade 5 admission. Very interested in school programs.",
-    templateSent: "Welcome Message",
-  },
+  // {
+  //   id: 2,
+  //   date: "11/04/2026",
+  //   time: "10:15 AM",
+  //   status: "Contacted",
+  //   tag: "Will think",
+  //   duration: "8 mins 20 secs",
+  //   remarks:
+  //     "Reached parent. Explained CBSE curriculum and sports facilities. Parent interested in fee structure details.",
+  //   templateSent: "Brochure Sharing",
+  // },
+  // {
+  //   id: 3,
+  //   date: "08/04/2026",
+  //   time: "03:45 PM",
+  //   status: "Contacted",
+  //   tag: "Interested",
+  //   duration: "15 mins 10 secs",
+  //   remarks:
+  //     "First contact successful. Parent enquired about Grade 5 admission. Very interested in school programs.",
+  //   templateSent: "Welcome Message",
+  // },
 ];
 
 function CallActionModal({ onClose, lead, onSubmit }) {
@@ -1888,9 +1888,10 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                       key={status}
                       type="button"
                       className={
-                        callForm.status === status
-                          ? "status-badge active"
-                          : "status-badge"
+                        `status-badge status-badge-${status
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}` +
+                        (callForm.status === status ? " active" : "")
                       }
                       disabled={statusLocked}
                       onClick={(e) => {

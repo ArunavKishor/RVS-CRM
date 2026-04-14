@@ -1,6 +1,6 @@
 export const stageTabs = [
   "Lead",
-  "Contacted",
+  // "Contacted",
   "Nurturing",
   "Visit Scheduled",
   "Visit Completed",
