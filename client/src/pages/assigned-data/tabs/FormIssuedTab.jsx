@@ -56,17 +56,13 @@ export function FormIssuedTab({
                   </span>
                 </td>
                 <td>
-                  {row.active ? (
-                    <button
-                      className="call-btn"
-                      type="button"
-                      onClick={() => onCallAction(row)}
-                    >
-                      <PhoneCall size={15} weight="regular" /> Call
-                    </button>
-                  ) : (
-                    <span className="locked-text">Locked</span>
-                  )}
+                  <button
+                    className="call-btn"
+                    type="button"
+                    onClick={() => onCallAction(row)}
+                  >
+                    <PhoneCall size={15} weight="regular" /> Call
+                  </button>
                 </td>
               </tr>
             ))}
