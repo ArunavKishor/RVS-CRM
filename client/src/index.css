@@ -3255,6 +3255,20 @@ tbody tr:hover {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
+.pickup-save-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.field-success {
+  margin: 0;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .pickup-note {
   padding: 12px 14px;
   border-radius: 12px;

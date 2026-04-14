@@ -42,6 +42,7 @@ import {
 import { activities, followUps, stats, tableRows } from "../config/crmData.jsx";
 import IntroVideo from "../assets/intro.mp4";
 import RVSLogo from "../assets/RVSLogo.png";
+import { AssignedDataView } from "./assigned-data/AssignedDataView.jsx";
 
 function DashboardView({
   formattedDate,
@@ -117,473 +118,6 @@ function DashboardView({
         <NotificationsPanel onClose={onCloseNotifications} />
       ) : null}
     </div>
-  );
-}
-
-function PipelineView({ markedCallLeadIds, onCallAction }) {
-  const stageTabs = [
-    "Lead",
-    "Contacted",
-    "Nurturing",
-    "Visit Scheduled",
-    "Visit Completed",
-    "Form Issued",
-    "Unsuccessful",
-    "Dead Leads",
-    "Converted",
-  ];
-
-  const stageThemes = {
-    Lead: { color: "#2563eb", soft: "#dbeafe" },
-    Contacted: { color: "#4f46e5", soft: "#e0e7ff" },
-    Nurturing: { color: "#0d9488", soft: "#ccfbf1" },
-    "Visit Scheduled": { color: "#f59e0b", soft: "#fef3c7" },
-    "Visit Completed": { color: "#ea580c", soft: "#ffedd5" },
-    "Form Issued": { color: "#9333ea", soft: "#f3e8ff" },
-    Unsuccessful: { color: "#dc2626", soft: "#fee2e2" },
-    "Dead Leads": { color: "#475569", soft: "#e2e8f0" },
-    Converted: { color: "#16a34a", soft: "#dcfce7" },
-  };
-
-  const [activeStage, setActiveStage] = useState("Lead");
-  const [currentPage, setCurrentPage] = useState(1);
-  const tableWrapRef = useRef(null);
-
-  const assignedRows = [
-    {
-      leadId: "LD-1001",
-      student: "Ishita Sharma",
-      parent: "Ravi Sharma",
-      contact: "••••••••••",
-      grade: "Grade 8",
-      source: "Website",
-      stage: "Lead",
-      active: true,
-    },
-    {
-      leadId: "LD-1002",
-      student: "Rahul Verma",
-      parent: "Sunita Verma",
-      contact: "••••••••••",
-      grade: "Grade 6",
-      source: "Walk-in",
-      stage: "Lead",
-      locked: true,
-    },
-    {
-      leadId: "LD-1003",
-      student: "Aarav Mehta",
-      parent: "Sunita Mehta",
-      contact: "••••••••••",
-      grade: "Grade 5",
-      source: "Instagram",
-      stage: "Lead",
-      active: true,
-    },
-    {
-      leadId: "LD-1004",
-      student: "Kavya Jain",
-      parent: "Manoj Jain",
-      contact: "••••••••••",
-      grade: "Grade 7",
-      source: "Reference",
-      stage: "Lead",
-      locked: true,
-    },
-    {
-      leadId: "LD-1005",
-      student: "Ananya Patel",
-      parent: "Ritu Patel",
-      contact: "••••••••••",
-      grade: "Grade 9",
-      source: "Facebook",
-      stage: "Contacted",
-      active: true,
-    },
-    {
-      leadId: "LD-1006",
-      student: "Vikram Singh",
-      parent: "Poonam Singh",
-      contact: "••••••••••",
-      grade: "Grade 10",
-      source: "Website",
-      stage: "Contacted",
-      locked: true,
-    },
-    {
-      leadId: "LD-1007",
-      student: "Sneha Reddy",
-      parent: "Mohan Reddy",
-      contact: "••••••••••",
-      grade: "Grade 11",
-      source: "Walk-in",
-      stage: "Nurturing",
-      active: true,
-    },
-    {
-      leadId: "LD-1008",
-      student: "Arjun Mehta",
-      parent: "Nidhi Mehta",
-      contact: "••••••••••",
-      grade: "Grade 8",
-      source: "Referral",
-      stage: "Nurturing",
-      locked: true,
-    },
-    {
-      leadId: "LD-1009",
-      student: "Kavya Jain",
-      parent: "Anil Jain",
-      contact: "••••••••••",
-      grade: "Grade 7",
-      source: "Website",
-      stage: "Visit Scheduled",
-      active: true,
-    },
-    {
-      leadId: "LD-1010",
-      student: "Manav Nair",
-      parent: "Deepa Nair",
-      contact: "••••••••••",
-      grade: "Grade 12",
-      source: "Walk-in",
-      stage: "Visit Completed",
-      active: true,
-    },
-    {
-      leadId: "LD-1011",
-      student: "Ira Kapoor",
-      parent: "Saurabh Kapoor",
-      contact: "••••••••••",
-      grade: "Grade 9",
-      source: "Instagram",
-      stage: "Form Issued",
-      active: true,
-    },
-    {
-      leadId: "LD-1012",
-      student: "Rishi Solanki",
-      parent: "Seema Solanki",
-      contact: "••••••••••",
-      grade: "Grade 10",
-      source: "Facebook",
-      stage: "Unsuccessful",
-      active: true,
-    },
-    {
-      leadId: "LD-1013",
-      student: "Pallavi Rao",
-      parent: "Raghu Rao",
-      contact: "••••••••••",
-      grade: "Grade 11",
-      source: "Website",
-      stage: "Dead Leads",
-      active: true,
-    },
-    {
-      leadId: "LD-1014",
-      student: "Aman Tiwari",
-      parent: "Kusum Tiwari",
-      contact: "••••••••••",
-      grade: "Grade 8",
-      source: "Reference",
-      stage: "Converted",
-      active: true,
-    },
-    {
-      leadId: "LD-1015",
-      student: "Neha Das",
-      parent: "Rohit Das",
-      contact: "••••••••••",
-      grade: "Grade 6",
-      source: "Walk-in",
-      stage: "Converted",
-      locked: true,
-    },
-  ];
-
-  const sourcePool = [
-    "Website",
-    "Walk-in",
-    "Instagram",
-    "Facebook",
-    "Reference",
-    "Google Ads",
-    "YouTube",
-    "WhatsApp Campaign",
-  ];
-
-  const generatedRows = Array.from({ length: 35 }, (_, index) => {
-    const id = index + 1;
-    const stage = stageTabs[index % stageTabs.length];
-    const isActive = id % 2 === 1;
-    const grade = 1 + (index % 12);
-
-    return {
-      leadId: `LD-${1016 + id}`,
-      student: `Dummy Student ${id}`,
-      parent: `Parent ${id}`,
-      contact: isActive ? `+91 98${(10000000 + id).toString()}` : "••••••••••",
-      grade: `Grade ${grade}`,
-      source: sourcePool[index % sourcePool.length],
-      stage,
-      active: isActive,
-      locked: !isActive,
-    };
-  });
-
-  const leadStageRows = Array.from({ length: 30 }, (_, index) => {
-    const rowNumber = index + 1;
-    const isActive = rowNumber % 2 === 1;
-    const grade = 1 + (index % 12);
-
-    return {
-      leadId: `LD-L${String(rowNumber).padStart(3, "0")}`,
-      student: `Lead Student ${rowNumber}`,
-      parent: `Lead Parent ${rowNumber}`,
-      contact: isActive ? `+91 97${String(6000000 + rowNumber)}` : "••••••••••",
-      grade: `Grade ${grade}`,
-      source: sourcePool[index % sourcePool.length],
-      stage: "Lead",
-      active: isActive,
-      locked: !isActive,
-    };
-  });
-
-  const allAssignedRows = [...assignedRows, ...generatedRows, ...leadStageRows];
-
-  const filteredRows = allAssignedRows.filter(
-    (row) => row.stage === activeStage,
-  );
-  const completedLeadIdSet = new Set(markedCallLeadIds);
-  const nextLeadToCallId =
-    activeStage === "Lead"
-      ? (filteredRows.find((row) => !completedLeadIdSet.has(row.leadId))
-          ?.leadId ?? null)
-      : null;
-  const enabledLeadIdSet =
-    activeStage === "Lead"
-      ? new Set([
-          ...markedCallLeadIds,
-          ...(nextLeadToCallId ? [nextLeadToCallId] : []),
-        ])
-      : new Set();
-
-  const getDummyIndianNumber = (leadId) => {
-    const seedDigits = leadId.replace(/\D/g, "");
-    const seedValue = Number(seedDigits.slice(-9) || "0");
-    const nineDigits = String(seedValue % 1000000000).padStart(9, "0");
-    return `+91 9${nineDigits}`;
-  };
-
-  const displayedRows = filteredRows.map((row) => ({
-    ...row,
-    contact: (() => {
-      if (activeStage !== "Lead") return row.contact;
-      if (!enabledLeadIdSet.has(row.leadId)) return "••••••••••";
-      if (row.contact && !row.contact.includes("•")) return row.contact;
-      return getDummyIndianNumber(row.leadId);
-    })(),
-  }));
-  const enabledCount =
-    activeStage === "Lead"
-      ? displayedRows.filter((row) => enabledLeadIdSet.has(row.leadId)).length
-      : displayedRows.filter((row) => !row.locked).length;
-  const rowsPerPage = 10;
-  const totalPages = Math.max(1, Math.ceil(displayedRows.length / rowsPerPage));
-  const currentPageSafe = Math.min(currentPage, totalPages);
-  const startIndex = (currentPageSafe - 1) * rowsPerPage;
-  const paginatedRows = displayedRows.slice(
-    startIndex,
-    startIndex + rowsPerPage,
-  );
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeStage]);
-
-  useEffect(() => {
-    if (tableWrapRef.current) {
-      tableWrapRef.current.scrollTop = 0;
-    }
-  }, [activeStage, currentPage]);
-
-  const theme = stageThemes[activeStage];
-
-  return (
-    <main
-      className="view-content assigned-page"
-      style={{
-        "--active-stage": theme.color,
-        "--active-stage-soft": theme.soft,
-      }}
-    >
-      <section className="assigned-head">
-        <h2>Assigned Data</h2>
-      </section>
-
-      <section className="assigned-stages" aria-label="Lead stages">
-        <div className="stage-scroll">
-          {stageTabs.map((tab) => (
-            <button
-              key={tab}
-              className={`stage-tab ${activeStage === tab ? "active" : ""}`}
-              type="button"
-              onClick={() => setActiveStage(tab)}
-              style={{
-                "--stage-color": stageThemes[tab].color,
-                "--stage-soft": stageThemes[tab].soft,
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="assigned-note-row">
-        <p>{`${activeStage} queue`}</p>
-        <span className="assigned-progress">
-          {`${enabledCount} / ${displayedRows.length}`}
-        </span>
-      </section>
-
-      <section
-        className="assigned-table-wrap"
-        aria-label="Assigned student list"
-        ref={tableWrapRef}
-      >
-        <table className="assigned-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Lead ID</th>
-              <th>Student Name</th>
-              <th>Parent Name</th>
-              <th>Contact</th>
-              <th>Grade</th>
-              <th>Source</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedRows.map((row) => {
-              const isUnlockedLead =
-                activeStage === "Lead" && enabledLeadIdSet.has(row.leadId);
-              const isCurrentLead =
-                activeStage === "Lead" && row.leadId === nextLeadToCallId;
-
-              return (
-                <tr key={row.leadId} className={row.active ? "active" : ""}>
-                  <td>
-                    {activeStage === "Lead" ? (
-                      isUnlockedLead ? (
-                        <LockSimpleOpen
-                          size={18}
-                          weight="regular"
-                          className={`unlock-icon ${
-                            isCurrentLead ? "current-unlock-icon" : ""
-                          }`}
-                        />
-                      ) : (
-                        <LockSimple
-                          size={18}
-                          weight="regular"
-                          className="lock-icon"
-                        />
-                      )
-                    ) : row.locked ? (
-                      <LockSimple
-                        size={18}
-                        weight="regular"
-                        className="lock-icon"
-                      />
-                    ) : (
-                      <span className="active-dot" aria-hidden="true" />
-                    )}
-                  </td>
-                  <td>{row.leadId}</td>
-                  <td className="name-cell">{row.student}</td>
-                  <td>{row.parent}</td>
-                  <td>{row.contact}</td>
-                  <td>{row.grade}</td>
-                  <td>
-                    <span className="chip source-tag">{row.source}</span>
-                  </td>
-                  <td>
-                    {activeStage === "Lead" ? (
-                      <button
-                        className={`call-btn ${
-                          isCurrentLead
-                            ? "current-call-btn"
-                            : isUnlockedLead
-                              ? "unlocked-call-btn"
-                              : ""
-                        }`}
-                        type="button"
-                        onClick={() => onCallAction(row)}
-                        disabled={!isUnlockedLead}
-                      >
-                        <PhoneCall size={15} weight="regular" /> Call
-                      </button>
-                    ) : row.active ? (
-                      <button
-                        className="call-btn"
-                        type="button"
-                        onClick={() => onCallAction(row)}
-                      >
-                        <PhoneCall size={15} weight="regular" /> Call
-                      </button>
-                    ) : (
-                      <span className="locked-text">Locked</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
-
-      <section
-        className="assigned-pagination"
-        aria-label="Assigned data pagination"
-      >
-        <p>
-          {`Showing ${displayedRows.length ? startIndex + 1 : 0}-${Math.min(startIndex + rowsPerPage, displayedRows.length)} of ${displayedRows.length}`}
-        </p>
-        <div className="pagination-actions">
-          <button
-            type="button"
-            onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            disabled={currentPageSafe === 1}
-          >
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-            (page) => (
-              <button
-                key={page}
-                type="button"
-                className={currentPageSafe === page ? "active" : ""}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ),
-          )}
-          <button
-            type="button"
-            onClick={() =>
-              setCurrentPage((page) => Math.min(totalPages, page + 1))
-            }
-            disabled={currentPageSafe === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      </section>
-    </main>
   );
 }
 
@@ -1649,7 +1183,7 @@ function NewLeadView({ mode, setMode, onClose }) {
 
   return (
     <main className="new-lead-view">
-      <PipelineView onCallAction={() => {}} />
+      <AssignedDataView onCallAction={() => {}} />
       <div className="pipeline-dim" aria-hidden="true" />
 
       <aside className="lead-drawer" aria-label="New lead panel">
@@ -1977,7 +1511,7 @@ function CallActionModal({ onClose, lead, onSubmit }) {
     followUpTime: "",
     visitDate: "",
     visitTime: "",
-    pickupNeed: "no",
+    pickupNeed: "",
     pickupTime: "",
     pickupAddress: "",
     remarks: "",
@@ -1985,7 +1519,32 @@ function CallActionModal({ onClose, lead, onSubmit }) {
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [errors, setErrors] = useState({});
+  const [pickupInfoSaved, setPickupInfoSaved] = useState(false);
   const statusLocked = Boolean(autoStatusByTag[callForm.tag]);
+  const isVisitScheduled = Boolean(callForm.visitDate && callForm.visitTime);
+
+  useEffect(() => {
+    if (isVisitScheduled) return;
+
+    setPickupInfoSaved(false);
+    setCallForm((state) => {
+      if (!state.pickupNeed && !state.pickupTime && !state.pickupAddress) {
+        return state;
+      }
+
+      return {
+        ...state,
+        pickupNeed: "",
+        pickupTime: "",
+        pickupAddress: "",
+      };
+    });
+    setErrors((state) => ({
+      ...state,
+      pickupTime: "",
+      pickupAddress: "",
+    }));
+  }, [isVisitScheduled]);
 
   const selectedFollowUpLabel =
     callForm.followUpDate && callForm.followUpTime
@@ -2038,7 +1597,7 @@ function CallActionModal({ onClose, lead, onSubmit }) {
     if (callForm.tag === "Other" && !callForm.status.trim()) {
       newErrors.status = "Status is required";
     }
-    if (callForm.pickupNeed === "yes") {
+    if (isVisitScheduled && callForm.pickupNeed === "yes") {
       if (!callForm.pickupTime.trim()) {
         newErrors.pickupTime = "Pickup time is required";
       }
@@ -2075,6 +1634,34 @@ function CallActionModal({ onClose, lead, onSubmit }) {
       pickupAddress: callForm.pickupAddress,
     });
     onClose();
+  };
+
+  const handlePickupInfoSave = (e) => {
+    e.preventDefault();
+
+    const pickupErrors = {};
+    if (!callForm.pickupTime.trim()) {
+      pickupErrors.pickupTime = "Pickup time is required";
+    }
+    if (!callForm.pickupAddress.trim()) {
+      pickupErrors.pickupAddress = "Pickup address is required";
+    }
+
+    if (Object.keys(pickupErrors).length > 0) {
+      setPickupInfoSaved(false);
+      setErrors((state) => ({
+        ...state,
+        ...pickupErrors,
+      }));
+      return;
+    }
+
+    setErrors((state) => ({
+      ...state,
+      pickupTime: "",
+      pickupAddress: "",
+    }));
+    setPickupInfoSaved(true);
   };
 
   const sortedLogs =
@@ -2426,108 +2013,130 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                 </div>
               </FormField>
 
-              <FormField
-                label="5. School Pick & Drop"
-                hint="Ask this after visit schedule if the parent needs transport support."
-              >
-                <div className="pickup-section">
-                  <div
-                    className="pickup-choice-row"
-                    role="group"
-                    aria-label="School pick and drop required"
-                  >
-                    <button
-                      type="button"
-                      className={
-                        callForm.pickupNeed === "no"
-                          ? "pickup-choice active"
-                          : "pickup-choice"
-                      }
-                      onClick={() =>
-                        setCallForm((state) => ({
-                          ...state,
-                          pickupNeed: "no",
-                          pickupTime: "",
-                          pickupAddress: "",
-                        }))
-                      }
+              {isVisitScheduled ? (
+                <FormField
+                  label="5. School Pick & Drop"
+                  hint="Show this only for scheduled visits."
+                >
+                  <div className="pickup-section">
+                    <div
+                      className="pickup-choice-row"
+                      role="group"
+                      aria-label="School pick and drop required"
                     >
-                      No, not needed
-                    </button>
-                    <button
-                      type="button"
-                      className={
-                        callForm.pickupNeed === "yes"
-                          ? "pickup-choice active"
-                          : "pickup-choice"
-                      }
-                      onClick={() =>
-                        setCallForm((state) => ({
-                          ...state,
-                          pickupNeed: "yes",
-                        }))
-                      }
-                    >
-                      Yes, arrange pick & drop
-                    </button>
+                      <button
+                        type="button"
+                        className={
+                          callForm.pickupNeed === "no"
+                            ? "pickup-choice active"
+                            : "pickup-choice"
+                        }
+                        onClick={() => {
+                          setPickupInfoSaved(false);
+                          setCallForm((state) => ({
+                            ...state,
+                            pickupNeed: "no",
+                            pickupTime: "",
+                            pickupAddress: "",
+                          }));
+                          setErrors((state) => ({
+                            ...state,
+                            pickupTime: "",
+                            pickupAddress: "",
+                          }));
+                        }}
+                      >
+                        No
+                      </button>
+                      <button
+                        type="button"
+                        className={
+                          callForm.pickupNeed === "yes"
+                            ? "pickup-choice active"
+                            : "pickup-choice"
+                        }
+                        onClick={() => {
+                          setPickupInfoSaved(false);
+                          setCallForm((state) => ({
+                            ...state,
+                            pickupNeed: "yes",
+                          }));
+                        }}
+                      >
+                        Yes
+                      </button>
+                    </div>
+
+                    {callForm.pickupNeed === "yes" ? (
+                      <div className="pickup-details-grid">
+                        <label className="pickup-field">
+                          <span>Pickup Time</span>
+                          <input
+                            type="time"
+                            value={callForm.pickupTime}
+                            onChange={(e) => {
+                              setPickupInfoSaved(false);
+                              setCallForm((state) => ({
+                                ...state,
+                                pickupTime: e.target.value,
+                              }));
+                              setErrors((state) => ({
+                                ...state,
+                                pickupTime: "",
+                              }));
+                            }}
+                            className="schedule-input"
+                          />
+                          {errors.pickupTime ? (
+                            <p className="field-error">{errors.pickupTime}</p>
+                          ) : null}
+                        </label>
+
+                        <label className="pickup-field pickup-address-field">
+                          <span>Pickup Address</span>
+                          <textarea
+                            className="pickup-address-input"
+                            rows={3}
+                            value={callForm.pickupAddress}
+                            onChange={(e) => {
+                              setPickupInfoSaved(false);
+                              setCallForm((state) => ({
+                                ...state,
+                                pickupAddress: e.target.value,
+                              }));
+                              setErrors((state) => ({
+                                ...state,
+                                pickupAddress: "",
+                              }));
+                            }}
+                            placeholder="Enter the pickup address shared by the parent"
+                          />
+                          {errors.pickupAddress ? (
+                            <p className="field-error">
+                              {errors.pickupAddress}
+                            </p>
+                          ) : null}
+                        </label>
+
+                        <div className="pickup-save-row">
+                          <button
+                            type="button"
+                            className="primary-btn inline-save"
+                            onClick={handlePickupInfoSave}
+                          >
+                            Save Pick & Drop
+                          </button>
+                          {pickupInfoSaved ? (
+                            <p className="field-success">
+                              Pick & Drop info saved.
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
-
-                  {callForm.pickupNeed === "yes" ? (
-                    <div className="pickup-details-grid">
-                      <label className="pickup-field">
-                        <span>Pickup Time</span>
-                        <input
-                          type="time"
-                          value={callForm.pickupTime}
-                          onChange={(e) => {
-                            setCallForm((state) => ({
-                              ...state,
-                              pickupTime: e.target.value,
-                            }));
-                            setErrors((state) => ({
-                              ...state,
-                              pickupTime: "",
-                            }));
-                          }}
-                          className="schedule-input"
-                        />
-                        {errors.pickupTime ? (
-                          <p className="field-error">{errors.pickupTime}</p>
-                        ) : null}
-                      </label>
-
-                      <label className="pickup-field pickup-address-field">
-                        <span>Pickup Address</span>
-                        <textarea
-                          className="pickup-address-input"
-                          rows={3}
-                          value={callForm.pickupAddress}
-                          onChange={(e) => {
-                            setCallForm((state) => ({
-                              ...state,
-                              pickupAddress: e.target.value,
-                            }));
-                            setErrors((state) => ({
-                              ...state,
-                              pickupAddress: "",
-                            }));
-                          }}
-                          placeholder="Enter the pickup address shared by the parent"
-                        />
-                        {errors.pickupAddress ? (
-                          <p className="field-error">{errors.pickupAddress}</p>
-                        ) : null}
-                      </label>
-                    </div>
-                  ) : (
-                    <div className="pickup-note">
-                      <span>
-                        Transport support can be added later if needed.
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </FormField>
+                </FormField>
+              ) : null}
 
               <FormField label="6. Call Notes" required>
                 <textarea
@@ -2974,7 +2583,7 @@ function App() {
             setActiveView("new-lead");
           }}
         >
-          <PipelineView
+          <AssignedDataView
             markedCallLeadIds={markedCallLeadIds}
             onCallAction={(lead) => {
               setSelectedLeadForCall(lead);
