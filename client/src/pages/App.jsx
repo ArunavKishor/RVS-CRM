@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowsDownUp,
   Bell,
@@ -131,6 +131,7 @@ function DashboardView({
 function PipelineView({ onCallAction }) {
   const [activeStage, setActiveStage] = useState("Lead");
   const [currentPage, setCurrentPage] = useState(1);
+  const tableWrapRef = useRef(null);
 
   const stageThemes = {
     Lead: { color: "#2563eb", soft: "#dbeafe" },
@@ -386,6 +387,13 @@ function PipelineView({ onCallAction }) {
   useEffect(() => {
     setCurrentPage(1);
   }, [activeStage]);
+
+  useEffect(() => {
+    if (tableWrapRef.current) {
+      tableWrapRef.current.scrollTop = 0;
+    }
+  }, [activeStage, currentPage]);
+
   const theme = stageThemes[activeStage];
 
   return (
@@ -429,6 +437,7 @@ function PipelineView({ onCallAction }) {
       <section
         className="assigned-table-wrap"
         aria-label="Assigned student list"
+        ref={tableWrapRef}
       >
         <table className="assigned-table">
           <thead>
@@ -2431,6 +2440,22 @@ function App() {
       year: "numeric",
     }).format(date);
   }, []);
+
+  useEffect(() => {
+    const resetScroll = () => {
+      window.scrollTo(0, 0);
+
+      document
+        .querySelectorAll(
+          ".app-panel, .content-area, .view-content, .assigned-table-wrap, .table-shell",
+        )
+        .forEach((element) => {
+          element.scrollTop = 0;
+        });
+    };
+
+    requestAnimationFrame(resetScroll);
+  }, [activeView]);
 
   const passwordRules = [
     {

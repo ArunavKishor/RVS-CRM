@@ -1,10 +1,13 @@
 import {
   FiBell,
   FiBarChart2,
+  FiBox,
+  FiChevronRight,
   FiColumns,
   FiGrid,
   FiList,
   FiPlus,
+  FiSend,
   FiUser,
 } from "react-icons/fi";
 
@@ -13,6 +16,14 @@ const navItems = [
   { key: "pipeline", label: "Assigned Data", icon: FiColumns },
   // { key: "table", label: "Leads Table", icon: FiList },
   { key: "reports", label: "My Reports", icon: FiBarChart2 },
+];
+
+const rightRailItems = [
+  { key: "messages", label: "Messages", icon: FiSend },
+  { key: "tasks", label: "Tasks", icon: FiList },
+  { key: "module-a", label: "Module", icon: FiBox },
+  { key: "module-b", label: "Module", icon: FiBox },
+  { key: "module-c", label: "Module", icon: FiBox },
 ];
 
 export function AppShell({
@@ -89,6 +100,34 @@ export function AppShell({
         </header>
         {children}
       </section>
+
+      <aside className="right-quickbar" aria-label="Quick actions">
+        <div className="quickbar-stack">
+          {rightRailItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                className="quickbar-btn"
+                type="button"
+                aria-label={item.label}
+                title={item.label}
+              >
+                <Icon size={20} aria-hidden="true" />
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          className="quickbar-btn quickbar-collapse"
+          type="button"
+          aria-label="Collapse quick actions"
+          title="Collapse"
+        >
+          <FiChevronRight size={20} aria-hidden="true" />
+        </button>
+      </aside>
     </div>
   );
 }

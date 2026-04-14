@@ -164,6 +164,7 @@ table {
 .link-btn:focus-visible,
 .nav-item:focus-visible,
 .sidebar-action:focus-visible,
+.quickbar-btn:focus-visible,
 .fab:focus-visible,
 .filter-select:focus-visible,
 .search-wrap:focus-within,
@@ -562,6 +563,54 @@ table {
   min-width: 0;
   min-height: 100vh;
   margin-left: 240px;
+  margin-right: 72px;
+}
+
+.right-quickbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 72px;
+  height: 100vh;
+  background: #eef1f6;
+  border-left: 1px solid #d6dce6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 8;
+}
+
+.quickbar-stack {
+  display: flex;
+  flex-direction: column;
+  margin-top: 68px;
+}
+
+.quickbar-btn {
+  width: 100%;
+  height: 64px;
+  border: 0;
+  border-bottom: 1px solid #d6dce6;
+  background: transparent;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.quickbar-btn:hover {
+  background: #e3e7ee;
+  color: #1f2937;
+}
+
+.quickbar-collapse {
+  border-top: 1px solid #d6dce6;
+  border-bottom: 0;
+  margin-bottom: 14px;
 }
 
 .topbar {
@@ -621,6 +670,8 @@ table {
 }
 
 .assigned-page {
+  height: calc(100vh - 56px);
+  overflow: hidden;
   gap: 14px;
   --active-stage: #2563eb;
   --active-stage-soft: #dbeafe;
@@ -720,6 +771,8 @@ table {
 }
 
 .assigned-table-wrap {
+  flex: 1;
+  min-height: 0;
   border-radius: 14px;
   background: #ffffff;
   border: 1px solid var(--border);
@@ -3675,7 +3728,12 @@ tbody tr:hover {
 
   .app-panel {
     margin-left: 0;
+    margin-right: 0;
     min-height: auto;
+  }
+
+  .right-quickbar {
+    display: none;
   }
 
   .sidebar nav {
@@ -3746,6 +3804,16 @@ tbody tr:hover {
 
   .assigned-head h2 {
     font-size: 28px;
+  }
+
+  .assigned-page {
+    height: auto;
+    overflow: visible;
+  }
+
+  .assigned-table-wrap {
+    flex: initial;
+    min-height: auto;
   }
 
   .assigned-progress {
