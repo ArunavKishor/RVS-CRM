@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Clock,
   LockSimple,
+  LockSimpleOpen,
   DownloadSimple,
   EnvelopeSimple,
   EyeSlash,
@@ -369,13 +370,34 @@ function PipelineView({ onCallAction, markedCallLeadIds }) {
       ? (filteredRows.find((row) => !completedLeadIdSet.has(row.leadId))
           ?.leadId ?? null)
       : null;
+  const enabledLeadIdSet =
+    activeStage === "Lead"
+      ? new Set([
+          ...markedCallLeadIds,
+          ...(nextLeadToCallId ? [nextLeadToCallId] : []),
+        ])
+      : new Set();
+
+  const getDummyIndianNumber = (leadId) => {
+    const seedDigits = leadId.replace(/\D/g, "");
+    const seedValue = Number(seedDigits.slice(-9) || "0");
+    const nineDigits = String(seedValue % 1000000000).padStart(9, "0");
+    return `+91 9${nineDigits}`;
+  };
+
   const displayedRows = filteredRows.map((row) => ({
     ...row,
-    contact:
-      activeStage === "Lead" && row.leadId !== nextLeadToCallId
-        ? "••••••••••"
-        : row.contact,
+    contact: (() => {
+      if (activeStage !== "Lead") return row.contact;
+      if (!enabledLeadIdSet.has(row.leadId)) return "••••••••••";
+      if (row.contact && !row.contact.includes("•")) return row.contact;
+      return getDummyIndianNumber(row.leadId);
+    })(),
   }));
+  const enabledCount =
+    activeStage === "Lead"
+      ? displayedRows.filter((row) => enabledLeadIdSet.has(row.leadId)).length
+      : displayedRows.filter((row) => !row.locked).length;
   const rowsPerPage = 10;
   const totalPages = Math.max(1, Math.ceil(displayedRows.length / rowsPerPage));
   const currentPageSafe = Math.min(currentPage, totalPages);
@@ -431,7 +453,7 @@ function PipelineView({ onCallAction, markedCallLeadIds }) {
       <section className="assigned-note-row">
         <p>{`${activeStage} queue`}</p>
         <span className="assigned-progress">
-          {`${displayedRows.filter((row) => !row.locked).length} / ${displayedRows.length}`}
+          {`${enabledCount} / ${displayedRows.length}`}
         </span>
       </section>
 
@@ -454,61 +476,80 @@ function PipelineView({ onCallAction, markedCallLeadIds }) {
             </tr>
           </thead>
           <tbody>
-            {paginatedRows.map((row) => (
-              <tr key={row.leadId} className={row.active ? "active" : ""}>
-                <td>
-                  {row.locked ? (
-                    <LockSimple
-                      size={18}
-                      weight="regular"
-                      className="lock-icon"
-                    />
-                  ) : (
-                    <span className="active-dot" aria-hidden="true" />
-                  )}
-                </td>
-                <td>{row.leadId}</td>
-                <td className="name-cell">{row.student}</td>
-                <td>{row.parent}</td>
-                <td>{row.contact}</td>
-                <td>{row.grade}</td>
-                <td>
-                  <span className="chip source-tag">{row.source}</span>
-                </td>
-                <td>
-                  {activeStage === "Lead" ? (
-                    <button
-                      className={`call-btn ${
-                        completedLeadIdSet.has(row.leadId) ? "done" : ""
-                      }`}
-                      type="button"
-                      onClick={() => onCallAction(row)}
-                      disabled={
-                        completedLeadIdSet.has(row.leadId) ||
-                        row.leadId !== nextLeadToCallId
-                      }
-                    >
-                      {completedLeadIdSet.has(row.leadId) ? (
-                        <CheckCircle size={15} weight="regular" />
+            {paginatedRows.map((row) => {
+              const isUnlockedLead =
+                activeStage === "Lead" && enabledLeadIdSet.has(row.leadId);
+              const isCurrentLead =
+                activeStage === "Lead" && row.leadId === nextLeadToCallId;
+
+              return (
+                <tr key={row.leadId} className={row.active ? "active" : ""}>
+                  <td>
+                    {activeStage === "Lead" ? (
+                      isUnlockedLead ? (
+                        <LockSimpleOpen
+                          size={18}
+                          weight="regular"
+                          className={`unlock-icon ${
+                            isCurrentLead ? "current-unlock-icon" : ""
+                          }`}
+                        />
                       ) : (
-                        <PhoneCall size={15} weight="regular" />
-                      )}
-                      {completedLeadIdSet.has(row.leadId) ? "Marked" : "Call"}
-                    </button>
-                  ) : row.active ? (
-                    <button
-                      className="call-btn"
-                      type="button"
-                      onClick={() => onCallAction(row)}
-                    >
-                      <PhoneCall size={15} weight="regular" /> Call
-                    </button>
-                  ) : (
-                    <span className="locked-text">Locked</span>
-                  )}
-                </td>
-              </tr>
-            ))}
+                        <LockSimple
+                          size={18}
+                          weight="regular"
+                          className="lock-icon"
+                        />
+                      )
+                    ) : row.locked ? (
+                      <LockSimple
+                        size={18}
+                        weight="regular"
+                        className="lock-icon"
+                      />
+                    ) : (
+                      <span className="active-dot" aria-hidden="true" />
+                    )}
+                  </td>
+                  <td>{row.leadId}</td>
+                  <td className="name-cell">{row.student}</td>
+                  <td>{row.parent}</td>
+                  <td>{row.contact}</td>
+                  <td>{row.grade}</td>
+                  <td>
+                    <span className="chip source-tag">{row.source}</span>
+                  </td>
+                  <td>
+                    {activeStage === "Lead" ? (
+                      <button
+                        className={`call-btn ${
+                          isCurrentLead
+                            ? "current-call-btn"
+                            : isUnlockedLead
+                              ? "unlocked-call-btn"
+                              : ""
+                        }`}
+                        type="button"
+                        onClick={() => onCallAction(row)}
+                        disabled={!isUnlockedLead}
+                      >
+                        <PhoneCall size={15} weight="regular" /> Call
+                      </button>
+                    ) : row.active ? (
+                      <button
+                        className="call-btn"
+                        type="button"
+                        onClick={() => onCallAction(row)}
+                      >
+                        <PhoneCall size={15} weight="regular" /> Call
+                      </button>
+                    ) : (
+                      <span className="locked-text">Locked</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </section>

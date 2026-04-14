@@ -847,20 +847,61 @@ table {
   cursor: pointer;
 }
 
-.call-btn:disabled {
-  background: #cbd5e1;
-  color: #64748b;
-  cursor: not-allowed;
+.call-btn.unlocked-call-btn {
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  color: #1d4ed8;
 }
 
-.call-btn.done,
-.call-btn.done:disabled {
-  background: #dcfce7;
-  color: #166534;
+.call-btn.current-call-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.28),
+    0 10px 20px rgba(37, 99, 235, 0.3);
+  animation: current-call-pulse 1.7s ease-out infinite;
+}
+
+.call-btn:disabled {
+  background: #cbd5e1;
+  border: 0;
+  color: #64748b;
+  box-shadow: none;
+  animation: none;
+  cursor: not-allowed;
 }
 
 .lock-icon {
   color: #9ca3af;
+}
+
+.unlock-icon {
+  color: var(--active-stage);
+}
+
+.current-unlock-icon {
+  color: #1d4ed8;
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.35));
+}
+
+@keyframes current-call-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(37, 99, 235, 0.46),
+      0 10px 20px rgba(37, 99, 235, 0.3);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 10px rgba(37, 99, 235, 0),
+      0 10px 20px rgba(37, 99, 235, 0.3);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(37, 99, 235, 0),
+      0 10px 20px rgba(37, 99, 235, 0.3);
+  }
 }
 
 .locked-text {
