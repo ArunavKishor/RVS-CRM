@@ -128,7 +128,7 @@ function DashboardView({
   );
 }
 
-function PipelineView({ onCallAction }) {
+function PipelineView({ onCallAction, markedCallLeadIds }) {
   const [activeStage, setActiveStage] = useState("Lead");
   const [currentPage, setCurrentPage] = useState(1);
   const tableWrapRef = useRef(null);
@@ -363,15 +363,16 @@ function PipelineView({ onCallAction }) {
   const filteredRows = allAssignedRows.filter(
     (row) => row.stage === activeStage,
   );
-  const visibleLeadContactRowId =
+  const completedLeadIdSet = new Set(markedCallLeadIds);
+  const nextLeadToCallId =
     activeStage === "Lead"
-      ? (filteredRows.find((row) => row.contact && !row.contact.includes("•"))
+      ? (filteredRows.find((row) => !completedLeadIdSet.has(row.leadId))
           ?.leadId ?? null)
       : null;
   const displayedRows = filteredRows.map((row) => ({
     ...row,
     contact:
-      activeStage === "Lead" && row.leadId !== visibleLeadContactRowId
+      activeStage === "Lead" && row.leadId !== nextLeadToCallId
         ? "••••••••••"
         : row.contact,
   }));
@@ -475,7 +476,26 @@ function PipelineView({ onCallAction }) {
                   <span className="chip source-tag">{row.source}</span>
                 </td>
                 <td>
-                  {row.active ? (
+                  {activeStage === "Lead" ? (
+                    <button
+                      className={`call-btn ${
+                        completedLeadIdSet.has(row.leadId) ? "done" : ""
+                      }`}
+                      type="button"
+                      onClick={() => onCallAction(row)}
+                      disabled={
+                        completedLeadIdSet.has(row.leadId) ||
+                        row.leadId !== nextLeadToCallId
+                      }
+                    >
+                      {completedLeadIdSet.has(row.leadId) ? (
+                        <CheckCircle size={15} weight="regular" />
+                      ) : (
+                        <PhoneCall size={15} weight="regular" />
+                      )}
+                      {completedLeadIdSet.has(row.leadId) ? "Marked" : "Call"}
+                    </button>
+                  ) : row.active ? (
                     <button
                       className="call-btn"
                       type="button"
@@ -1953,32 +1973,16 @@ function CallActionModal({ onClose, lead, onSubmit }) {
         })
       : "Select a date and time";
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!callForm.tag.trim()) newErrors.tag = "Tag is required";
-    if (!callForm.status.trim()) newErrors.status = "Status is required";
-    if (!callForm.followUpDate.trim())
-      newErrors.followUpDate = "Follow-up date is required";
-    if (!callForm.followUpTime.trim())
-      newErrors.followUpTime = "Follow-up time is required";
-    if (!callForm.remarks.trim()) newErrors.remarks = "Remarks are required";
-    if (!callForm.templateSelected.trim())
-      newErrors.templateSelected = "WhatsApp template is required";
-    return newErrors;
-  };
-
   const handleSave = (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      onSubmit({
-        ...callForm,
-        followUpDateTime: `${callForm.followUpDate}T${callForm.followUpTime}`,
-      });
-      onClose();
-    } else {
-      setErrors(newErrors);
-    }
+    onSubmit({
+      ...callForm,
+      followUpDateTime:
+        callForm.followUpDate && callForm.followUpTime
+          ? `${callForm.followUpDate}T${callForm.followUpTime}`
+          : "",
+    });
+    onClose();
   };
 
   const sortedLogs =
@@ -2430,6 +2434,7 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(true);
   const [callActionOpen, setCallActionOpen] = useState(false);
   const [selectedLeadForCall, setSelectedLeadForCall] = useState(null);
+  const [markedCallLeadIds, setMarkedCallLeadIds] = useState([]);
 
   const formattedDate = useMemo(() => {
     const date = new Date("2026-04-13T12:30:00");
@@ -2757,6 +2762,7 @@ function App() {
           }}
         >
           <PipelineView
+            markedCallLeadIds={markedCallLeadIds}
             onCallAction={(lead) => {
               setSelectedLeadForCall(lead);
               setCallActionOpen(true);
@@ -2772,7 +2778,12 @@ function App() {
             }}
             onSubmit={(callData) => {
               console.log("Call action submitted:", callData);
-              // Here you would typically save the call data
+              if (selectedLeadForCall?.stage === "Lead") {
+                setMarkedCallLeadIds((state) => {
+                  if (state.includes(selectedLeadForCall.leadId)) return state;
+                  return [...state, selectedLeadForCall.leadId];
+                });
+              }
             }}
           />
         ) : null}
