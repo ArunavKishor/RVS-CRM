@@ -3,7 +3,7 @@ export const assignedRows = [
     leadId: "LD-1001",
     student: "Ishita Sharma",
     parent: "Ravi Sharma",
-    contact: "••••••••••",
+    contact: "+91 98765 1001",
     grade: "Grade 8",
     source: "Website",
     stage: "Lead",
@@ -13,7 +13,7 @@ export const assignedRows = [
     leadId: "LD-1002",
     student: "Rahul Verma",
     parent: "Sunita Verma",
-    contact: "••••••••••",
+    contact: "+91 98765 1002",
     grade: "Grade 6",
     source: "Walk-in",
     stage: "Lead",
@@ -23,7 +23,7 @@ export const assignedRows = [
     leadId: "LD-1003",
     student: "Aarav Mehta",
     parent: "Sunita Mehta",
-    contact: "••••••••••",
+    contact: "+91 98765 1003",
     grade: "Grade 5",
     source: "Instagram",
     stage: "Lead",
@@ -33,7 +33,7 @@ export const assignedRows = [
     leadId: "LD-1004",
     student: "Kavya Jain",
     parent: "Manoj Jain",
-    contact: "••••••••••",
+    contact: "+91 98765 1004",
     grade: "Grade 7",
     source: "Reference",
     stage: "Lead",
@@ -43,7 +43,7 @@ export const assignedRows = [
     leadId: "LD-1005",
     student: "Ananya Patel",
     parent: "Ritu Patel",
-    contact: "••••••••••",
+    contact: "+91 98765 1005",
     grade: "Grade 9",
     source: "Facebook",
     stage: "Contacted",
@@ -53,7 +53,7 @@ export const assignedRows = [
     leadId: "LD-1006",
     student: "Vikram Singh",
     parent: "Poonam Singh",
-    contact: "••••••••••",
+    contact: "+91 98765 1006",
     grade: "Grade 10",
     source: "Website",
     stage: "Contacted",
@@ -63,7 +63,7 @@ export const assignedRows = [
     leadId: "LD-1007",
     student: "Sneha Reddy",
     parent: "Mohan Reddy",
-    contact: "••••••••••",
+    contact: "+91 98765 1007",
     grade: "Grade 11",
     source: "Walk-in",
     stage: "Nurturing",
@@ -73,7 +73,7 @@ export const assignedRows = [
     leadId: "LD-1008",
     student: "Arjun Mehta",
     parent: "Nidhi Mehta",
-    contact: "••••••••••",
+    contact: "+91 98765 1008",
     grade: "Grade 8",
     source: "Referral",
     stage: "Nurturing",
@@ -83,7 +83,7 @@ export const assignedRows = [
     leadId: "LD-1009",
     student: "Kavya Jain",
     parent: "Anil Jain",
-    contact: "••••••••••",
+    contact: "+91 98765 1009",
     grade: "Grade 7",
     source: "Website",
     stage: "Visit Scheduled",
@@ -93,7 +93,7 @@ export const assignedRows = [
     leadId: "LD-1010",
     student: "Manav Nair",
     parent: "Deepa Nair",
-    contact: "••••••••••",
+    contact: "+91 98765 1010",
     grade: "Grade 12",
     source: "Walk-in",
     stage: "Visit Completed",
@@ -103,7 +103,7 @@ export const assignedRows = [
     leadId: "LD-1011",
     student: "Ira Kapoor",
     parent: "Saurabh Kapoor",
-    contact: "••••••••••",
+    contact: "+91 98765 1011",
     grade: "Grade 9",
     source: "Instagram",
     stage: "Form Issued",
@@ -113,7 +113,7 @@ export const assignedRows = [
     leadId: "LD-1012",
     student: "Rishi Solanki",
     parent: "Seema Solanki",
-    contact: "••••••••••",
+    contact: "+91 98765 1012",
     grade: "Grade 10",
     source: "Facebook",
     stage: "Unsuccessful",
@@ -123,7 +123,7 @@ export const assignedRows = [
     leadId: "LD-1013",
     student: "Pallavi Rao",
     parent: "Raghu Rao",
-    contact: "••••••••••",
+    contact: "+91 98765 1013",
     grade: "Grade 11",
     source: "Website",
     stage: "Dead Leads",
@@ -133,7 +133,7 @@ export const assignedRows = [
     leadId: "LD-1014",
     student: "Aman Tiwari",
     parent: "Kusum Tiwari",
-    contact: "••••••••••",
+    contact: "+91 98765 1014",
     grade: "Grade 8",
     source: "Reference",
     stage: "Converted",
@@ -143,7 +143,7 @@ export const assignedRows = [
     leadId: "LD-1015",
     student: "Neha Das",
     parent: "Rohit Das",
-    contact: "••••••••••",
+    contact: "+91 98765 1015",
     grade: "Grade 6",
     source: "Walk-in",
     stage: "Converted",
@@ -162,25 +162,13 @@ const sourcePool = [
   "WhatsApp Campaign",
 ];
 
-export function buildAssignedRows(stageTabs) {
-  const generatedRows = Array.from({ length: 35 }, (_, index) => {
-    const id = index + 1;
-    const stage = stageTabs[index % stageTabs.length];
-    const isActive = id % 2 === 1;
-    const grade = 1 + (index % 12);
+export function buildAssignedRows() {
+  const leadSeedRows = assignedRows.filter((row) => row.stage === "Lead");
 
-    return {
-      leadId: `LD-${1016 + id}`,
-      student: `Dummy Student ${id}`,
-      parent: `Parent ${id}`,
-      contact: isActive ? `+91 98${(10000000 + id).toString()}` : "••••••••••",
-      grade: `Grade ${grade}`,
-      source: sourcePool[index % sourcePool.length],
-      stage,
-      active: isActive,
-      locked: !isActive,
-    };
-  });
+  const createContactNumber = (leadId) => {
+    const leadDigits = leadId.replace(/\D/g, "").slice(-4).padStart(4, "0");
+    return `+91 98765 ${leadDigits}`;
+  };
 
   const leadStageRows = Array.from({ length: 30 }, (_, index) => {
     const rowNumber = index + 1;
@@ -191,7 +179,7 @@ export function buildAssignedRows(stageTabs) {
       leadId: `LD-L${String(rowNumber).padStart(3, "0")}`,
       student: `Lead Student ${rowNumber}`,
       parent: `Lead Parent ${rowNumber}`,
-      contact: isActive ? `+91 97${String(6000000 + rowNumber)}` : "••••••••••",
+      contact: createContactNumber(`LD-L${String(rowNumber).padStart(3, "0")}`),
       grade: `Grade ${grade}`,
       source: sourcePool[index % sourcePool.length],
       stage: "Lead",
@@ -200,5 +188,5 @@ export function buildAssignedRows(stageTabs) {
     };
   });
 
-  return [...assignedRows, ...generatedRows, ...leadStageRows];
+  return [...leadSeedRows, ...leadStageRows];
 }

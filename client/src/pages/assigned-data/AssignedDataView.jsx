@@ -4,12 +4,19 @@ import { tabComponentsByStage } from "./tabs/index.jsx";
 import { buildAssignedRows } from "./data/assignedRowsData.jsx";
 import { AssignedStageTabs } from "./components/AssignedStageTabs.jsx";
 
-export function AssignedDataView({ markedCallLeadIds = [], onCallAction }) {
+export function AssignedDataView({
+  markedCallLeadIds = [],
+  leadStageById = {},
+  onCallAction,
+}) {
   const [activeStage, setActiveStage] = useState("Lead");
   const [currentPage, setCurrentPage] = useState(1);
   const tableWrapRef = useRef(null);
 
-  const allAssignedRows = buildAssignedRows(stageTabs);
+  const allAssignedRows = buildAssignedRows().map((row) => ({
+    ...row,
+    stage: leadStageById[row.leadId] ?? row.stage,
+  }));
   const filteredRows = allAssignedRows.filter(
     (row) => row.stage === activeStage,
   );
@@ -29,22 +36,7 @@ export function AssignedDataView({ markedCallLeadIds = [], onCallAction }) {
         ])
       : new Set();
 
-  const getDummyIndianNumber = (leadId) => {
-    const seedDigits = leadId.replace(/\D/g, "");
-    const seedValue = Number(seedDigits.slice(-9) || "0");
-    const nineDigits = String(seedValue % 1000000000).padStart(9, "0");
-    return `+91 9${nineDigits}`;
-  };
-
-  const displayedRows = filteredRows.map((row) => ({
-    ...row,
-    contact: (() => {
-      if (activeStage !== "Lead") return row.contact;
-      if (!enabledLeadIdSet.has(row.leadId)) return "••••••••••";
-      if (row.contact && !row.contact.includes("•")) return row.contact;
-      return getDummyIndianNumber(row.leadId);
-    })(),
-  }));
+  const displayedRows = filteredRows.map((row) => ({ ...row }));
 
   const enabledCount =
     activeStage === "Lead"
