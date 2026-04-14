@@ -68,60 +68,51 @@ function DashboardView({
         </section>
 
         <section className="split-grid">
-          <article className="panel-card">
-            <header className="panel-head">
+          <article className="panel-card" aria-label="Today follow-ups">
+            <div className="panel-head">
               <h2>Today&apos;s Follow-ups</h2>
-              <span className="count-pill">5</span>
-            </header>
-
-            <div className="follow-list">
-              {followUps.map((item) => (
-                <div key={item.name} className="follow-row">
-                  <div className="avatar">{item.name[0]}</div>
-                  <div className="follow-meta">
-                    <strong>{item.name}</strong>
-                    <span>{item.detail}</span>
-                  </div>
-                  <div className="follow-right">
-                    <time>{item.time}</time>
-                    <span
-                      className={`status-chip ${item.status.toLowerCase()}`}
-                    >
-                      {item.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
+              <span className="count-pill">{followUps.length}</span>
             </div>
 
-            <button className="link-btn align-left" type="button">
-              View All Follow-ups →
-            </button>
+            {followUps.map((item) => (
+              <div className="follow-row" key={`${item.name}-${item.time}`}>
+                <div className="avatar" aria-hidden="true">
+                  {item.name.slice(0, 1)}
+                </div>
+                <div className="follow-meta">
+                  <strong>{item.name}</strong>
+                  <span>{item.detail}</span>
+                </div>
+                <div className="follow-right">
+                  <time>{item.time}</time>
+                  <span className={`status-chip ${item.status.toLowerCase()}`}>
+                    {item.status}
+                  </span>
+                </div>
+              </div>
+            ))}
           </article>
 
-          <article className="panel-card">
-            <header className="panel-head">
+          <article className="panel-card" aria-label="Recent activities">
+            <div className="panel-head">
               <h2>Recent Activity</h2>
-            </header>
+            </div>
 
             <ul className="timeline">
               {activities.map((item, index) => (
                 <li key={item}>
-                  <time>{`${2 + Math.floor(index / 2)}:${index % 2 ? "45" : "15"} PM`}</time>
-                  <div className="line-dot" aria-hidden="true">
-                    <CalendarDots size={15} weight="regular" />
-                  </div>
+                  <time>{`${9 + index}:00 AM`}</time>
+                  <span className="line-dot" aria-hidden="true">
+                    <Clock size={12} weight="bold" />
+                  </span>
                   <p>{item}</p>
                 </li>
               ))}
             </ul>
-
-            <button className="link-btn align-left" type="button">
-              View All →
-            </button>
           </article>
         </section>
       </main>
+
       {notificationsOpen ? (
         <NotificationsPanel onClose={onCloseNotifications} />
       ) : null}
@@ -129,23 +120,7 @@ function DashboardView({
   );
 }
 
-function PipelineView({ onCallAction, markedCallLeadIds }) {
-  const [activeStage, setActiveStage] = useState("Lead");
-  const [currentPage, setCurrentPage] = useState(1);
-  const tableWrapRef = useRef(null);
-
-  const stageThemes = {
-    Lead: { color: "#2563eb", soft: "#dbeafe" },
-    Contacted: { color: "#4f46e5", soft: "#e0e7ff" },
-    Nurturing: { color: "#0d9488", soft: "#ccfbf1" },
-    "Visit Scheduled": { color: "#f59e0b", soft: "#fef3c7" },
-    "Visit Completed": { color: "#ea580c", soft: "#ffedd5" },
-    "Form Issued": { color: "#7c3aed", soft: "#ede9fe" },
-    Unsuccessful: { color: "#f97316", soft: "#ffedd5" },
-    "Dead Leads": { color: "#6b7280", soft: "#e5e7eb" },
-    Converted: { color: "#16a34a", soft: "#dcfce7" },
-  };
-
+function PipelineView({ markedCallLeadIds, onCallAction }) {
   const stageTabs = [
     "Lead",
     "Contacted",
@@ -158,12 +133,28 @@ function PipelineView({ onCallAction, markedCallLeadIds }) {
     "Converted",
   ];
 
+  const stageThemes = {
+    Lead: { color: "#2563eb", soft: "#dbeafe" },
+    Contacted: { color: "#4f46e5", soft: "#e0e7ff" },
+    Nurturing: { color: "#0d9488", soft: "#ccfbf1" },
+    "Visit Scheduled": { color: "#f59e0b", soft: "#fef3c7" },
+    "Visit Completed": { color: "#ea580c", soft: "#ffedd5" },
+    "Form Issued": { color: "#9333ea", soft: "#f3e8ff" },
+    Unsuccessful: { color: "#dc2626", soft: "#fee2e2" },
+    "Dead Leads": { color: "#475569", soft: "#e2e8f0" },
+    Converted: { color: "#16a34a", soft: "#dcfce7" },
+  };
+
+  const [activeStage, setActiveStage] = useState("Lead");
+  const [currentPage, setCurrentPage] = useState(1);
+  const tableWrapRef = useRef(null);
+
   const assignedRows = [
     {
       leadId: "LD-1001",
-      student: "Priya Sharma",
-      parent: "Ramesh Sharma",
-      contact: "+91 98765 43210",
+      student: "Ishita Sharma",
+      parent: "Ravi Sharma",
+      contact: "••••••••••",
       grade: "Grade 8",
       source: "Website",
       stage: "Lead",
@@ -1909,12 +1900,12 @@ const callTags = [
   "Health issue",
   "Family issue",
   "After exam",
+  "Other",
 ];
 
 const callStatuses = [
   "Contacted",
   "Nurturing",
-  "Visit Scheduled",
   "Visit Completed",
   "Form Issued",
   "Unsuccessful",
@@ -1922,33 +1913,24 @@ const callStatuses = [
   "Converted",
 ];
 
-const whatsappTemplates = [
-  {
-    id: 1,
-    name: "Welcome Message",
-    text: "Welcome to Raj Vedanta School admissions process. We are excited to help you!",
-  },
-  {
-    id: 2,
-    name: "Campus Visit Reminder",
-    text: "Reminder: Your campus visit is scheduled for {date} at {time}. Looking forward to seeing you!",
-  },
-  {
-    id: 3,
-    name: "Brochure Sharing",
-    text: "We have sent you our school brochure and prospectus. Please review and let us know if you have any questions.",
-  },
-  {
-    id: 4,
-    name: "Follow-up",
-    text: "Hello! Following up on our recent conversation. Do you have any questions about our school?",
-  },
-  {
-    id: 5,
-    name: "Admission Form",
-    text: "Your admission form has been generated. Please review and submit it at your earliest convenience.",
-  },
-];
+const autoStatusByTag = {
+  "Call not connected": "Unsuccessful",
+  "Call not picked": "Unsuccessful",
+  "Switched off": "Unsuccessful",
+  "Out of range": "Unsuccessful",
+  Interested: "Nurturing",
+  "Will think": "Nurturing",
+  "Not sure": "Nurturing",
+  "Out of town": "Nurturing",
+  "Health issue": "Nurturing",
+  "Family issue": "Nurturing",
+  "After exam": "Nurturing",
+  "Distance issue": "Nurturing",
+  "Fees issue": "Nurturing",
+  "Unable to come": "Nurturing",
+  "Not interested": "Dead Leads",
+  "Already joined": "Dead Leads",
+};
 
 const mockCallLogs = [
   {
@@ -1993,12 +1975,17 @@ function CallActionModal({ onClose, lead, onSubmit }) {
     status: "",
     followUpDate: "",
     followUpTime: "",
+    visitDate: "",
+    visitTime: "",
+    pickupNeed: "no",
+    pickupTime: "",
+    pickupAddress: "",
     remarks: "",
-    templateSelected: "",
   });
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [errors, setErrors] = useState({});
+  const statusLocked = Boolean(autoStatusByTag[callForm.tag]);
 
   const selectedFollowUpLabel =
     callForm.followUpDate && callForm.followUpTime
@@ -2014,14 +2001,78 @@ function CallActionModal({ onClose, lead, onSubmit }) {
         })
       : "Select a date and time";
 
+  const selectedVisitLabel =
+    callForm.visitDate && callForm.visitTime
+      ? new Date(`${callForm.visitDate}T${callForm.visitTime}`).toLocaleString(
+          "en-IN",
+          {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          },
+        )
+      : "Select a visit date and time";
+
+  const handleTagSelect = (tag) => {
+    const autoStatus = autoStatusByTag[tag] ?? "";
+
+    setCallForm((state) => ({
+      ...state,
+      tag,
+      status: autoStatus,
+    }));
+
+    setErrors((state) => ({
+      ...state,
+      tag: "",
+      status: "",
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!callForm.tag.trim()) newErrors.tag = "Tag is required";
+    if (callForm.tag === "Other" && !callForm.status.trim()) {
+      newErrors.status = "Status is required";
+    }
+    if (callForm.pickupNeed === "yes") {
+      if (!callForm.pickupTime.trim()) {
+        newErrors.pickupTime = "Pickup time is required";
+      }
+      if (!callForm.pickupAddress.trim()) {
+        newErrors.pickupAddress = "Pickup address is required";
+      }
+    }
+    if (!callForm.remarks.trim()) newErrors.remarks = "Remarks are required";
+    return newErrors;
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     onSubmit({
       ...callForm,
+      status: autoStatusByTag[callForm.tag] || callForm.status,
       followUpDateTime:
         callForm.followUpDate && callForm.followUpTime
           ? `${callForm.followUpDate}T${callForm.followUpTime}`
           : "",
+      visitDateTime:
+        callForm.visitDate && callForm.visitTime
+          ? `${callForm.visitDate}T${callForm.visitTime}`
+          : "",
+      pickupRequired: callForm.pickupNeed === "yes",
+      pickupTime: callForm.pickupTime,
+      pickupAddress: callForm.pickupAddress,
     });
     onClose();
   };
@@ -2222,9 +2273,8 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                           }
                           onClick={(e) => {
                             e.preventDefault();
-                            setCallForm((state) => ({ ...state, tag }));
+                            handleTagSelect(tag);
                             setShowTagDropdown(false);
-                            setErrors((state) => ({ ...state, tag: "" }));
                           }}
                         >
                           {tag}
@@ -2236,7 +2286,15 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                 {errors.tag && <p className="field-error">{errors.tag}</p>}
               </FormField>
 
-              <FormField label="2. Update Status" required>
+              <FormField
+                label="2. Update Status"
+                hint={
+                  statusLocked
+                    ? `Auto-selected from call outcome: ${autoStatusByTag[callForm.tag]}`
+                    : "Choose a status when the outcome is Other."
+                }
+                required={callForm.tag === "Other"}
+              >
                 <div className="status-grid">
                   {callStatuses.map((status) => (
                     <button
@@ -2247,8 +2305,10 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                           ? "status-badge active"
                           : "status-badge"
                       }
+                      disabled={statusLocked}
                       onClick={(e) => {
                         e.preventDefault();
+                        if (statusLocked) return;
                         setCallForm((state) => ({ ...state, status }));
                         setErrors((state) => ({ ...state, status: "" }));
                       }}
@@ -2262,7 +2322,10 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                 )}
               </FormField>
 
-              <FormField label="3. Set Follow-up Date/Time" required>
+              <FormField
+                label="3. Follow-up Reminder"
+                hint="Optional. Set this when you need a callback reminder for another day or time."
+              >
                 <div className="schedule-picker-card">
                   <div className="schedule-picker-grid">
                     <label className="schedule-field">
@@ -2318,7 +2381,155 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                 )}
               </FormField>
 
-              <FormField label="4. Call Notes" required>
+              <FormField
+                label="4. Visit Schedule"
+                hint="Optional. Use this when the parent agrees to a campus visit."
+              >
+                <div className="schedule-picker-card">
+                  <div className="schedule-picker-grid">
+                    <label className="schedule-field">
+                      <span>Date</span>
+                      <input
+                        type="date"
+                        value={callForm.visitDate}
+                        onChange={(e) => {
+                          setCallForm((state) => ({
+                            ...state,
+                            visitDate: e.target.value,
+                          }));
+                        }}
+                        className="schedule-input"
+                      />
+                    </label>
+                    <label className="schedule-field">
+                      <span>Time</span>
+                      <input
+                        type="time"
+                        value={callForm.visitTime}
+                        onChange={(e) => {
+                          setCallForm((state) => ({
+                            ...state,
+                            visitTime: e.target.value,
+                          }));
+                        }}
+                        className="schedule-input"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="followup-display modern">
+                    <CalendarDots size={14} weight="regular" />
+                    <span>
+                      Visit reminder: <strong>{selectedVisitLabel}</strong>
+                    </span>
+                  </div>
+                </div>
+              </FormField>
+
+              <FormField
+                label="5. School Pick & Drop"
+                hint="Ask this after visit schedule if the parent needs transport support."
+              >
+                <div className="pickup-section">
+                  <div
+                    className="pickup-choice-row"
+                    role="group"
+                    aria-label="School pick and drop required"
+                  >
+                    <button
+                      type="button"
+                      className={
+                        callForm.pickupNeed === "no"
+                          ? "pickup-choice active"
+                          : "pickup-choice"
+                      }
+                      onClick={() =>
+                        setCallForm((state) => ({
+                          ...state,
+                          pickupNeed: "no",
+                          pickupTime: "",
+                          pickupAddress: "",
+                        }))
+                      }
+                    >
+                      No, not needed
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        callForm.pickupNeed === "yes"
+                          ? "pickup-choice active"
+                          : "pickup-choice"
+                      }
+                      onClick={() =>
+                        setCallForm((state) => ({
+                          ...state,
+                          pickupNeed: "yes",
+                        }))
+                      }
+                    >
+                      Yes, arrange pick & drop
+                    </button>
+                  </div>
+
+                  {callForm.pickupNeed === "yes" ? (
+                    <div className="pickup-details-grid">
+                      <label className="pickup-field">
+                        <span>Pickup Time</span>
+                        <input
+                          type="time"
+                          value={callForm.pickupTime}
+                          onChange={(e) => {
+                            setCallForm((state) => ({
+                              ...state,
+                              pickupTime: e.target.value,
+                            }));
+                            setErrors((state) => ({
+                              ...state,
+                              pickupTime: "",
+                            }));
+                          }}
+                          className="schedule-input"
+                        />
+                        {errors.pickupTime ? (
+                          <p className="field-error">{errors.pickupTime}</p>
+                        ) : null}
+                      </label>
+
+                      <label className="pickup-field pickup-address-field">
+                        <span>Pickup Address</span>
+                        <textarea
+                          className="pickup-address-input"
+                          rows={3}
+                          value={callForm.pickupAddress}
+                          onChange={(e) => {
+                            setCallForm((state) => ({
+                              ...state,
+                              pickupAddress: e.target.value,
+                            }));
+                            setErrors((state) => ({
+                              ...state,
+                              pickupAddress: "",
+                            }));
+                          }}
+                          placeholder="Enter the pickup address shared by the parent"
+                        />
+                        {errors.pickupAddress ? (
+                          <p className="field-error">{errors.pickupAddress}</p>
+                        ) : null}
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="pickup-note">
+                      <span>
+                        Transport support can be added later if needed.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </FormField>
+
+              <FormField label="6. Call Notes" required>
                 <textarea
                   className="call-remarks-textarea"
                   rows={3}
@@ -2334,45 +2545,6 @@ function CallActionModal({ onClose, lead, onSubmit }) {
                 />
                 {errors.remarks && (
                   <p className="field-error">{errors.remarks}</p>
-                )}
-              </FormField>
-
-              <FormField label="5. Send WhatsApp Message" required>
-                <div className="template-selection">
-                  {whatsappTemplates.map((template) => (
-                    <button
-                      key={template.id}
-                      type="button"
-                      className={
-                        callForm.templateSelected === template.id
-                          ? "template-option active"
-                          : "template-option"
-                      }
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCallForm((state) => ({
-                          ...state,
-                          templateSelected: template.id,
-                        }));
-                        setErrors((state) => ({
-                          ...state,
-                          templateSelected: "",
-                        }));
-                      }}
-                    >
-                      <div className="template-header">
-                        <ChatCircleDots size={16} weight="regular" />
-                        <strong>{template.name}</strong>
-                        {callForm.templateSelected === template.id && (
-                          <Check size={16} weight="bold" />
-                        )}
-                      </div>
-                      <p className="template-preview">{template.text}</p>
-                    </button>
-                  ))}
-                </div>
-                {errors.templateSelected && (
-                  <p className="field-error">{errors.templateSelected}</p>
                 )}
               </FormField>
             </div>
