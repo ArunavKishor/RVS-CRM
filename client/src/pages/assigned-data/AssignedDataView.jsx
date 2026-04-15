@@ -74,9 +74,9 @@ export function AssignedDataView({
         "--active-stage-soft": theme.soft,
       }}
     >
-      <section className="assigned-head">
+      {/* <section className="assigned-head">
         <h2>Assigned Data</h2>
-      </section>
+      </section> */}
 
       <AssignedStageTabs
         stageTabs={stageTabs}

@@ -920,7 +920,7 @@ function MobileKanbanView() {
       <section className="phone-frame">
         <header className="mobile-topbar">
           <CaretDown size={18} weight="regular" />
-          <strong>Assigned Data</strong>
+           <strong>Assigned Data</strong>
           <ArrowsDownUp size={18} weight="regular" />
         </header>
         <div className="mobile-kanban-scroll">
