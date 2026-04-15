@@ -874,3 +874,5 @@ export function RestrictedCallActionModal({
     </div>
   );
 }
+
+export default RestrictedCallActionModal;

@@ -60,7 +60,7 @@ export function LeadTab({
                   <td>{row.leadId}</td>
                   <td className="name-cell">{row.student}</td>
                   <td>{row.parent}</td>
-                  <td>{row.contact}</td>
+                  <td>{isUnlockedLead ? row.contact : "Hidden"}</td>
                   <td>{row.grade}</td>
                   <td>
                     <span className="chip source-tag" data-source={row.source}>
