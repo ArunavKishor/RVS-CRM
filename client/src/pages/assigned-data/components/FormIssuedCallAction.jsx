@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   CalendarDots,
   CaretDown,
@@ -16,67 +16,39 @@ import {
 import { FormField } from "../../../components/common/Controls.jsx";
 
 const callTags = [
-  "Call not connected",
-  "Call not picked",
-  "Switched off",
-  "Out of range",
-  "Interested",
-  "Will think",
+  "Form submitted",
+  "Need more counselling",
+  "No response after form sharing",
+  "Fees concern",
   "Not interested",
-  "Already joined",
-  "Not sure",
-  "Out of town",
-  "Distance issue",
-  "Fees issue",
-  "Unable to come",
-  "Health issue",
-  "Family issue",
-  "After exam",
   "Other",
 ];
 
-const callStatuses = [
-  "Visit Scheduled",
-  "Unsuccessful",
-  "Dead Leads",
-  "No Change",
-];
+const callStatuses = ["Unsuccessful", "Nurturing", "Converted"];
 
-const enabledStatusesByTag = {
-  "Call not connected": ["Unsuccessful"],
-  "Call not picked": ["Unsuccessful"],
-  "Switched off": ["Unsuccessful"],
-  "Out of range": ["Unsuccessful"],
-  Interested: ["Visit Scheduled", "No Change"],
-  "Will think": ["No Change"],
-  "Not sure": ["No Change"],
-  "Out of town": ["No Change", "Visit Scheduled"],
-  "Health issue": ["No Change"],
-  "Family issue": ["No Change"],
-  "After exam": ["No Change"],
-  "Distance issue": ["No Change"],
-  "Fees issue": ["No Change"],
-  "Unable to come": ["Visit Scheduled", "No Change"],
-  "Not interested": ["Dead Leads"],
-  "Already joined": ["Dead Leads"],
-  Other: ["Visit Scheduled", "Unsuccessful", "Dead Leads", "No Change"],
+const autoStatusByTag = {
+  "Form submitted": "Converted",
+  "Need more counselling": "Nurturing",
+  "No response after form sharing": "Unsuccessful",
+  "Fees concern": "Nurturing",
+  "Not interested": "Unsuccessful",
 };
 
 const mockCallLogs = [
   {
     id: 1,
-    date: "13/04/2026",
-    time: "02:30 PM",
+    date: "15/04/2026",
+    time: "04:20 PM",
     status: "Nurturing",
-    tag: "Interested",
-    duration: "12 mins 45 secs",
+    tag: "Need more counselling",
+    duration: "09 mins 15 secs",
     remarks:
-      "Spoke with father. Interested in visiting campus next week. Will call back on Monday to confirm date.",
-    templateSent: "Welcome Message",
+      "Parent reviewed the form but needs clarification on fee plan and transport options.",
+    templateSent: "Form Follow-up",
   },
 ];
 
-export function RestrictedCallActionModal({
+export function FormIssuedCallActionModal({
   onClose,
   lead,
   onSubmit,
@@ -88,74 +60,13 @@ export function RestrictedCallActionModal({
     status: "",
     followUpDate: "",
     followUpTime: "",
-    visitDate: "",
-    visitTime: "",
-    pickupNeed: "",
-    pickupTime: "",
-    pickupAddress: "",
     remarks: "",
   });
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [errors, setErrors] = useState({});
-  const [pickupInfoSaved, setPickupInfoSaved] = useState(false);
-  const enabledStatuses = enabledStatusesByTag[callForm.tag] || [];
-  const isVisitStatusSelected = callForm.status === "Visit Scheduled";
-  const isVisitScheduled = Boolean(callForm.visitDate && callForm.visitTime);
-
-  useEffect(() => {
-    if (isVisitStatusSelected) return;
-
-    setPickupInfoSaved(false);
-    setCallForm((state) => {
-      if (
-        !state.visitDate &&
-        !state.visitTime &&
-        !state.pickupNeed &&
-        !state.pickupTime &&
-        !state.pickupAddress
-      ) {
-        return state;
-      }
-
-      return {
-        ...state,
-        visitDate: "",
-        visitTime: "",
-        pickupNeed: "",
-        pickupTime: "",
-        pickupAddress: "",
-      };
-    });
-    setErrors((state) => ({
-      ...state,
-      pickupTime: "",
-      pickupAddress: "",
-    }));
-  }, [isVisitStatusSelected]);
-
-  useEffect(() => {
-    if (isVisitScheduled) return;
-
-    setPickupInfoSaved(false);
-    setCallForm((state) => {
-      if (!state.pickupNeed && !state.pickupTime && !state.pickupAddress) {
-        return state;
-      }
-
-      return {
-        ...state,
-        pickupNeed: "",
-        pickupTime: "",
-        pickupAddress: "",
-      };
-    });
-    setErrors((state) => ({
-      ...state,
-      pickupTime: "",
-      pickupAddress: "",
-    }));
-  }, [isVisitScheduled]);
+  const statusLocked = Boolean(autoStatusByTag[callForm.tag]);
+  const selectedStatus = autoStatusByTag[callForm.tag] || callForm.status;
 
   const selectedFollowUpLabel =
     callForm.followUpDate && callForm.followUpTime
@@ -178,13 +89,17 @@ export function RestrictedCallActionModal({
         ? "nurturing"
         : sectionName === "Visit Scheduled"
           ? "visit"
-          : "default";
+          : sectionName === "Form Issued"
+            ? "form-issued"
+            : "default";
 
   const handleTagSelect = (tag) => {
+    const autoStatus = autoStatusByTag[tag] ?? "";
+
     setCallForm((state) => ({
       ...state,
       tag,
-      status: "",
+      status: autoStatus,
     }));
 
     setErrors((state) => ({
@@ -197,25 +112,7 @@ export function RestrictedCallActionModal({
   const validateForm = () => {
     const newErrors = {};
     if (!callForm.tag.trim()) newErrors.tag = "Tag is required";
-    if (callForm.tag === "Other" && !callForm.status.trim()) {
-      newErrors.status = "Status is required";
-    }
-    if (isVisitStatusSelected) {
-      if (!callForm.visitDate.trim()) {
-        newErrors.visitDate = "Visit date is required";
-      }
-      if (!callForm.visitTime.trim()) {
-        newErrors.visitTime = "Visit time is required";
-      }
-    }
-    if (isVisitScheduled && callForm.pickupNeed === "yes") {
-      if (!callForm.pickupTime.trim()) {
-        newErrors.pickupTime = "Pickup time is required";
-      }
-      if (!callForm.pickupAddress.trim()) {
-        newErrors.pickupAddress = "Pickup address is required";
-      }
-    }
+    if (!selectedStatus.trim()) newErrors.status = "Status is required";
     if (!callForm.remarks.trim()) newErrors.remarks = "Remarks are required";
     return newErrors;
   };
@@ -231,47 +128,13 @@ export function RestrictedCallActionModal({
 
     onSubmit({
       ...callForm,
+      status: selectedStatus,
       followUpDateTime:
         callForm.followUpDate && callForm.followUpTime
           ? `${callForm.followUpDate}T${callForm.followUpTime}`
           : "",
-      visitDateTime:
-        callForm.visitDate && callForm.visitTime
-          ? `${callForm.visitDate}T${callForm.visitTime}`
-          : "",
-      pickupRequired: callForm.pickupNeed === "yes",
-      pickupTime: callForm.pickupTime,
-      pickupAddress: callForm.pickupAddress,
     });
     onClose();
-  };
-
-  const handlePickupInfoSave = (e) => {
-    e.preventDefault();
-
-    const pickupErrors = {};
-    if (!callForm.pickupTime.trim()) {
-      pickupErrors.pickupTime = "Pickup time is required";
-    }
-    if (!callForm.pickupAddress.trim()) {
-      pickupErrors.pickupAddress = "Pickup address is required";
-    }
-
-    if (Object.keys(pickupErrors).length > 0) {
-      setPickupInfoSaved(false);
-      setErrors((state) => ({
-        ...state,
-        ...pickupErrors,
-      }));
-      return;
-    }
-
-    setErrors((state) => ({
-      ...state,
-      pickupTime: "",
-      pickupAddress: "",
-    }));
-    setPickupInfoSaved(true);
   };
 
   const sortedLogs =
@@ -488,233 +351,48 @@ export function RestrictedCallActionModal({
 
               <FormField
                 label="2. Update Status"
-                hint="Select a status for this call outcome."
-                required={callForm.tag !== ""}
+                hint={
+                  statusLocked
+                    ? `Auto-selected from call outcome: ${autoStatusByTag[callForm.tag]}`
+                    : "Select one target tab for this lead."
+                }
+                required
               >
                 <div
                   className={
-                    callForm.status
-                      ? "status-grid has-selection"
-                      : "status-grid"
+                    selectedStatus ? "status-grid has-selection" : "status-grid"
                   }
                 >
-                  {callStatuses.map((status) => {
-                    const isEnabled = enabledStatuses.includes(status);
-                    return (
-                      <button
-                        key={status}
-                        type="button"
-                        className={
-                          `status-badge status-badge-${status
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}` +
-                          (callForm.status === status ? " active" : "")
-                        }
-                        disabled={!isEnabled}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (!isEnabled) return;
-                          setCallForm((state) => ({ ...state, status }));
-                          setErrors((state) => ({ ...state, status: "" }));
-                        }}
-                      >
-                        {status}
-                      </button>
-                    );
-                  })}
+                  {callStatuses.map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      className={
+                        `status-badge status-badge-${status
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}` +
+                        (selectedStatus === status ? " active" : "")
+                      }
+                      disabled={statusLocked}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (statusLocked) return;
+                        setCallForm((state) => ({ ...state, status }));
+                        setErrors((state) => ({ ...state, status: "" }));
+                      }}
+                    >
+                      {status}
+                    </button>
+                  ))}
                 </div>
                 {errors.status && (
                   <p className="field-error">{errors.status}</p>
                 )}
               </FormField>
 
-              {isVisitStatusSelected ? (
-                <FormField
-                  label="3. Visit Schedule"
-                  required
-                  hint="Optional. Use this when the parent agrees to a campus visit."
-                >
-                  <div className="schedule-picker-card">
-                    <div className="schedule-picker-grid">
-                      <label className="schedule-field">
-                        <span>Date</span>
-                        <input
-                          type="date"
-                          value={callForm.visitDate}
-                          onChange={(e) => {
-                            setCallForm((state) => ({
-                              ...state,
-                              visitDate: e.target.value,
-                            }));
-                            setErrors((state) => ({
-                              ...state,
-                              visitDate: "",
-                            }));
-                          }}
-                          className="schedule-input"
-                        />
-                      </label>
-                      <label className="schedule-field">
-                        <span>Time</span>
-                        <input
-                          type="time"
-                          value={callForm.visitTime}
-                          onChange={(e) => {
-                            setCallForm((state) => ({
-                              ...state,
-                              visitTime: e.target.value,
-                            }));
-                            setErrors((state) => ({
-                              ...state,
-                              visitTime: "",
-                            }));
-                          }}
-                          className="schedule-input"
-                        />
-                      </label>
-                    </div>
-
-                    {(errors.visitDate || errors.visitTime) && (
-                      <p className="field-error">
-                        {errors.visitDate || errors.visitTime}
-                      </p>
-                    )}
-
-                    {isVisitScheduled ? (
-                      <div className="pickup-section">
-                        <p className="pickup-question">
-                          Do you want school pickup and drop service?
-                        </p>
-                        <div
-                          className="pickup-choice-row"
-                          role="group"
-                          aria-label="School pick and drop required"
-                        >
-                          <button
-                            type="button"
-                            className={
-                              callForm.pickupNeed === "no"
-                                ? "pickup-choice active"
-                                : "pickup-choice"
-                            }
-                            onClick={() => {
-                              setPickupInfoSaved(false);
-                              setCallForm((state) => ({
-                                ...state,
-                                pickupNeed: "no",
-                                pickupTime: "",
-                                pickupAddress: "",
-                              }));
-                              setErrors((state) => ({
-                                ...state,
-                                pickupTime: "",
-                                pickupAddress: "",
-                              }));
-                            }}
-                          >
-                            No
-                          </button>
-                          <button
-                            type="button"
-                            className={
-                              callForm.pickupNeed === "yes"
-                                ? "pickup-choice active"
-                                : "pickup-choice"
-                            }
-                            onClick={() => {
-                              setPickupInfoSaved(false);
-                              setCallForm((state) => ({
-                                ...state,
-                                pickupNeed: "yes",
-                              }));
-                            }}
-                          >
-                            Yes
-                          </button>
-                        </div>
-
-                        {callForm.pickupNeed === "yes" ? (
-                          <div className="pickup-details-grid">
-                            <label className="pickup-field">
-                              <span>Pickup Time</span>
-                              <input
-                                type="time"
-                                value={callForm.pickupTime}
-                                onChange={(e) => {
-                                  setPickupInfoSaved(false);
-                                  setCallForm((state) => ({
-                                    ...state,
-                                    pickupTime: e.target.value,
-                                  }));
-                                  setErrors((state) => ({
-                                    ...state,
-                                    pickupTime: "",
-                                  }));
-                                }}
-                                className="schedule-input"
-                              />
-                              {errors.pickupTime ? (
-                                <p className="field-error">
-                                  {errors.pickupTime}
-                                </p>
-                              ) : null}
-                            </label>
-
-                            <label className="pickup-field pickup-address-field">
-                              <span>Pickup Address</span>
-                              <textarea
-                                className="pickup-address-input"
-                                rows={3}
-                                value={callForm.pickupAddress}
-                                onChange={(e) => {
-                                  setPickupInfoSaved(false);
-                                  setCallForm((state) => ({
-                                    ...state,
-                                    pickupAddress: e.target.value,
-                                  }));
-                                  setErrors((state) => ({
-                                    ...state,
-                                    pickupAddress: "",
-                                  }));
-                                }}
-                                placeholder="Enter the pickup address shared by the parent"
-                              />
-                              {errors.pickupAddress ? (
-                                <p className="field-error">
-                                  {errors.pickupAddress}
-                                </p>
-                              ) : null}
-                            </label>
-
-                            <div className="pickup-save-row">
-                              <button
-                                type="button"
-                                className="primary-btn inline-save"
-                                onClick={handlePickupInfoSave}
-                              >
-                                Save Pick & Drop
-                              </button>
-                              {pickupInfoSaved ? (
-                                <p className="field-success">
-                                  Pick & Drop info saved.
-                                </p>
-                              ) : null}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </div>
-                </FormField>
-              ) : null}
-
               <FormField
-                label={
-                  isVisitStatusSelected
-                    ? "4. Follow-up Reminder"
-                    : "3. Follow-up Reminder"
-                }
-                hint="Optional. Set this when you need a callback reminder for another day or time."
+                label="3. Follow-up Reminder"
+                hint="Optional. Set a reminder if another follow-up call is needed."
               >
                 <div className="schedule-picker-card">
                   <div className="schedule-picker-grid">
@@ -771,12 +449,7 @@ export function RestrictedCallActionModal({
                 )}
               </FormField>
 
-              <FormField
-                label={
-                  isVisitStatusSelected ? "5. Call Notes" : "4. Call Notes"
-                }
-                required
-              >
+              <FormField label="4. Call Notes" required>
                 <textarea
                   className="call-remarks-textarea"
                   rows={3}

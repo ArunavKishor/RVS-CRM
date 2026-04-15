@@ -44,7 +44,10 @@ import IntroVideo from "../assets/intro.mp4";
 import RVSLogo from "../assets/RVSLogo.png";
 import { AssignedDataView } from "./assigned-data/AssignedDataView.jsx";
 import { LeadCallActionModal } from "./assigned-data/components/LeadCallActionModal.jsx";
-import { RestrictedCallActionModal } from "./assigned-data/components/nurturingcallAction.jsx";
+import { RestrictedCallActionModal } from "./assigned-data/components/NurturingCallAction.jsx";
+import { VisitSCallActionModal } from "./assigned-data/components/VisitSCallAction.jsx";
+import { VisitCCallaActionModal } from "./assigned-data/components/Visit_CCallaAction.jsx";
+import { FormIssuedCallActionModal } from "./assigned-data/components/FormIssuedCallAction.jsx";
 import { stageTabs } from "./assigned-data/config/stageConfig.jsx";
 
 function DashboardView({
@@ -920,7 +923,7 @@ function MobileKanbanView() {
       <section className="phone-frame">
         <header className="mobile-topbar">
           <CaretDown size={18} weight="regular" />
-           <strong>Assigned Data</strong>
+          <strong>Assigned Data</strong>
           <ArrowsDownUp size={18} weight="regular" />
         </header>
         <div className="mobile-kanban-scroll">
@@ -1780,6 +1783,94 @@ function App() {
           selectedLeadForCall.stage === "Lead" ? (
             <LeadCallActionModal
               lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
+              onClose={() => {
+                setCallActionOpen(false);
+                setSelectedLeadForCall(null);
+              }}
+              onSubmit={(callData) => {
+                console.log("Call action submitted:", callData);
+                const selectedStatus = callData.status;
+                const canMoveStage = stageTabs.includes(selectedStatus);
+
+                if (canMoveStage && selectedLeadForCall?.leadId) {
+                  setLeadStageById((state) => ({
+                    ...state,
+                    [selectedLeadForCall.leadId]: selectedStatus,
+                  }));
+                }
+
+                if (selectedLeadForCall?.stage === "Lead") {
+                  setMarkedCallLeadIds((state) => {
+                    if (state.includes(selectedLeadForCall.leadId))
+                      return state;
+                    return [...state, selectedLeadForCall.leadId];
+                  });
+                }
+              }}
+            />
+          ) : selectedLeadForCall.stage === "Visit Scheduled" ? (
+            <VisitSCallActionModal
+              lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
+              onClose={() => {
+                setCallActionOpen(false);
+                setSelectedLeadForCall(null);
+              }}
+              onSubmit={(callData) => {
+                console.log("Call action submitted:", callData);
+                const selectedStatus = callData.status;
+                const canMoveStage = stageTabs.includes(selectedStatus);
+
+                if (canMoveStage && selectedLeadForCall?.leadId) {
+                  setLeadStageById((state) => ({
+                    ...state,
+                    [selectedLeadForCall.leadId]: selectedStatus,
+                  }));
+                }
+
+                if (selectedLeadForCall?.stage === "Lead") {
+                  setMarkedCallLeadIds((state) => {
+                    if (state.includes(selectedLeadForCall.leadId))
+                      return state;
+                    return [...state, selectedLeadForCall.leadId];
+                  });
+                }
+              }}
+            />
+          ) : selectedLeadForCall.stage === "Visit Completed" ? (
+            <VisitCCallaActionModal
+              lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
+              onClose={() => {
+                setCallActionOpen(false);
+                setSelectedLeadForCall(null);
+              }}
+              onSubmit={(callData) => {
+                console.log("Call action submitted:", callData);
+                const selectedStatus = callData.status;
+                const canMoveStage = stageTabs.includes(selectedStatus);
+
+                if (canMoveStage && selectedLeadForCall?.leadId) {
+                  setLeadStageById((state) => ({
+                    ...state,
+                    [selectedLeadForCall.leadId]: selectedStatus,
+                  }));
+                }
+
+                if (selectedLeadForCall?.stage === "Lead") {
+                  setMarkedCallLeadIds((state) => {
+                    if (state.includes(selectedLeadForCall.leadId))
+                      return state;
+                    return [...state, selectedLeadForCall.leadId];
+                  });
+                }
+              }}
+            />
+          ) : selectedLeadForCall.stage === "Form Issued" ? (
+            <FormIssuedCallActionModal
+              lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
               onClose={() => {
                 setCallActionOpen(false);
                 setSelectedLeadForCall(null);
@@ -1808,6 +1899,7 @@ function App() {
           ) : (
             <RestrictedCallActionModal
               lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
               onClose={() => {
                 setCallActionOpen(false);
                 setSelectedLeadForCall(null);

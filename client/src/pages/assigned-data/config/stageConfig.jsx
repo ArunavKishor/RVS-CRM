@@ -13,7 +13,7 @@ export const stageTabs = [
 export const stageThemes = {
   Lead: { color: "#2563eb", soft: "#dbeafe" },
   Contacted: { color: "#4f46e5", soft: "#e0e7ff" },
-  Nurturing: { color: "#0d9488", soft: "#ccfbf1" },
+  Nurturing: { color: "#eab308", soft: "#fef9c3" },
   "Visit Scheduled": { color: "#f59e0b", soft: "#fef3c7" },
   "Visit Completed": { color: "#ea580c", soft: "#ffedd5" },
   "Form Issued": { color: "#9333ea", soft: "#f3e8ff" },

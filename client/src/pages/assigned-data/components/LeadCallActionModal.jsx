@@ -75,7 +75,7 @@ const mockCallLogs = [
   },
 ];
 
-export function LeadCallActionModal({ onClose, lead, onSubmit }) {
+export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
   const [activeTab, setActiveTab] = useState("student-info");
   const [callForm, setCallForm] = useState({
     tag: "",
@@ -165,6 +165,15 @@ export function LeadCallActionModal({ onClose, lead, onSubmit }) {
           minute: "2-digit",
         })
       : "Select a date and time";
+
+  const sectionTone =
+    sectionName === "Lead"
+      ? "lead"
+      : sectionName === "Nurturing"
+        ? "nurturing"
+        : sectionName === "Visit Scheduled"
+          ? "visit"
+          : "default";
 
   const handleTagSelect = (tag) => {
     const autoStatus = autoStatusByTag[tag] ?? "";
@@ -283,10 +292,11 @@ export function LeadCallActionModal({ onClose, lead, onSubmit }) {
             </div>
             <div>
               <h2>Call Action</h2>
-              <p>
-                {lead.student} · {lead.grade} · {lead.source}
-              </p>
+              <p>{lead.student} · {lead.grade} · {lead.source}</p>
             </div>
+            <div className={` call-header-section section-${sectionTone}`}>
+                {sectionName ? `${sectionName} Section` : "Assigned Data"}
+              </div>
           </div>
           <button
             className="icon-btn call-close-btn"

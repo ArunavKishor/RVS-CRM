@@ -2876,6 +2876,53 @@ tbody tr:hover {
   opacity: 0.86;
 }
 
+.call-header-section {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.call-header-section.section-lead {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(37, 99, 235, 0.38);
+}
+
+.call-header-section.section-nurturing {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(22, 163, 74, 0.35);
+}
+
+.call-header-section.section-visit {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(245, 158, 11, 0.35);
+}
+
+.call-header-section.section-default {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.call-header-section.section-form-issued {
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(124, 58, 237, 0.38);
+}
+
 .call-close-btn {
   color: white !important;
   width: 42px;
@@ -3227,21 +3274,39 @@ tbody tr:hover {
 }
 
 .status-badge-nurturing {
-  border-color: #86efac;
-  background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-  color: #166534;
+  border-color: #fcd34d;
+  background: linear-gradient(180deg, #fefce8 0%, #fef3c7 100%);
+  color: #854d0e;
 }
 
 .status-badge-unsuccessful {
-  border-color: #fdba74;
-  background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
-  color: #9a3412;
+  border-color: #fca5a5;
+  background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+  color: #991b1b;
 }
 
 .status-badge-visit-scheduled {
   border-color: #93c5fd;
   background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
   color: #1e3a8a;
+}
+
+.status-badge-visit-completed {
+  border-color: #86efac;
+  background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #166534;
+}
+
+.status-badge-form-issued {
+  border-color: #c4b5fd;
+  background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #5b21b6;
+}
+
+.status-badge-converted {
+  border-color: #c4b5fd;
+  background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #5b21b6;
 }
 
 .status-badge-dead-leads {
@@ -3257,18 +3322,33 @@ tbody tr:hover {
 }
 
 .status-badge-nurturing:hover {
-  border-color: #22c55e;
-  box-shadow: 0 10px 18px rgba(34, 197, 94, 0.12);
+  border-color: #eab308;
+  box-shadow: 0 10px 18px rgba(234, 179, 8, 0.14);
 }
 
 .status-badge-unsuccessful:hover {
-  border-color: #f97316;
-  box-shadow: 0 10px 18px rgba(249, 115, 22, 0.12);
+  border-color: #ef4444;
+  box-shadow: 0 10px 18px rgba(239, 68, 68, 0.14);
 }
 
 .status-badge-visit-scheduled:hover {
   border-color: #3b82f6;
   box-shadow: 0 10px 18px rgba(59, 130, 246, 0.14);
+}
+
+.status-badge-visit-completed:hover {
+  border-color: #22c55e;
+  box-shadow: 0 10px 18px rgba(34, 197, 94, 0.12);
+}
+
+.status-badge-form-issued:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 10px 18px rgba(139, 92, 246, 0.12);
+}
+
+.status-badge-converted:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 10px 18px rgba(139, 92, 246, 0.12);
 }
 
 .status-badge-dead-leads:hover {
@@ -3296,17 +3376,17 @@ tbody tr:hover {
 }
 
 .status-badge-nurturing.active {
-  border-color: #16a34a;
-  background: linear-gradient(135deg, #22c55e 0%, #166534 100%);
+  border-color: #ca8a04;
+  background: linear-gradient(135deg, #facc15 0%, #a16207 100%);
   color: #ffffff;
-  box-shadow: 0 14px 26px rgba(34, 197, 94, 0.24);
+  box-shadow: 0 14px 26px rgba(234, 179, 8, 0.24);
 }
 
 .status-badge-unsuccessful.active {
-  border-color: #ea580c;
-  background: linear-gradient(135deg, #fb923c 0%, #9a3412 100%);
+  border-color: #dc2626;
+  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
   color: #ffffff;
-  box-shadow: 0 14px 26px rgba(249, 115, 22, 0.24);
+  box-shadow: 0 14px 26px rgba(220, 38, 38, 0.24);
 }
 
 .status-badge-visit-scheduled.active {
@@ -3314,6 +3394,27 @@ tbody tr:hover {
   background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
   color: #ffffff;
   box-shadow: 0 14px 26px rgba(37, 99, 235, 0.24);
+}
+
+.status-badge-visit-completed.active {
+  border-color: #16a34a;
+  background: linear-gradient(135deg, #22c55e 0%, #166534 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 26px rgba(34, 197, 94, 0.24);
+}
+
+.status-badge-form-issued.active {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 26px rgba(124, 58, 237, 0.24);
+}
+
+.status-badge-converted.active {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 26px rgba(124, 58, 237, 0.24);
 }
 
 .status-badge-dead-leads.active {
@@ -3325,6 +3426,9 @@ tbody tr:hover {
 
 .status-badge-nurturing.active:disabled,
 .status-badge-visit-scheduled.active:disabled,
+.status-badge-visit-completed.active:disabled,
+.status-badge-form-issued.active:disabled,
+.status-badge-converted.active:disabled,
 .status-badge-unsuccessful.active:disabled,
 .status-badge-dead-leads.active:disabled {
   color: #ffffff;
