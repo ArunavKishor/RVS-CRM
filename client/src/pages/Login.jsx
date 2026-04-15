@@ -38,24 +38,42 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-card" aria-label="Counsellor login panel">
-        <div className="logo-box" aria-hidden="true">
+    <main className="grid min-h-screen place-items-center gap-4 bg-[linear-gradient(135deg,#eff6ff_0%,#ffffff_72%)] px-5 py-8">
+      <section
+        className="flex w-full max-w-[400px] flex-col gap-6 rounded-xl bg-white p-7 shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+        aria-label="Counsellor login panel"
+      >
+        <div
+          className="grid h-16 w-16 place-items-center rounded-[14px] bg-[var(--primary)] font-bold tracking-[0.02em] text-white"
+          aria-hidden="true"
+        >
           RV
         </div>
 
-        <header className="login-title-wrap">
-          <h1>Raj Vedanta Admissions</h1>
-          <p>Counsellor Login</p>
+        <header>
+          <h1 className="m-0 text-2xl font-semibold leading-tight text-[var(--heading)]">
+            Raj Vedanta Admissions
+          </h1>
+          <p className="mt-2 text-[13px] text-slate-500">Counsellor Login</p>
         </header>
 
-        <hr />
+        <hr className="w-full border-0 border-t border-[var(--border)]" />
 
-        <form className="login-form" onSubmit={handleSubmit} noValidate>
-          <label htmlFor="email">Email Address</label>
-          <div className="input-wrap">
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <label
+            htmlFor="email"
+            className="text-[13px] font-medium text-[var(--body)]"
+          >
+            Email Address
+          </label>
+          <div className="flex h-11 items-center gap-2.5 rounded-md border border-[var(--border)] px-3 focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]">
             <EnvelopeSimple size={18} weight="regular" aria-hidden="true" />
             <input
+              className="min-h-[42px] w-full border-0 bg-transparent text-[var(--body)] outline-0 placeholder:text-slate-400"
               id="email"
               name="email"
               type="email"
@@ -67,9 +85,15 @@ export default function Login({ onLogin }) {
             />
           </div>
 
-          <label htmlFor="password">Password</label>
-          <div className="input-wrap">
+          <label
+            htmlFor="password"
+            className="text-[13px] font-medium text-[var(--body)]"
+          >
+            Password
+          </label>
+          <div className="flex h-11 items-center gap-2.5 rounded-md border border-[var(--border)] px-3 focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]">
             <input
+              className="min-h-[42px] w-full border-0 bg-transparent text-[var(--body)] outline-0 placeholder:text-slate-400"
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
@@ -80,7 +104,7 @@ export default function Login({ onLogin }) {
               required
             />
             <button
-              className="icon-btn"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md border-0 bg-transparent text-slate-500"
               type="button"
               aria-label={showPassword ? "Hide password" : "Show password"}
               onClick={() => setShowPassword((state) => !state)}
@@ -102,17 +126,24 @@ export default function Login({ onLogin }) {
             </p>
           ) : null}
 
-          <button className="primary-btn" type="submit" disabled={isSubmitting}>
+          <button
+            className="mt-1 min-h-11 w-full cursor-pointer rounded-md border-0 bg-[var(--primary)] text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+            type="submit"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Logging in..." : "Log In"}
           </button>
         </form>
 
-        <button className="link-btn" type="button">
+        <button
+          className="min-h-11 cursor-pointer border-0 bg-transparent p-0 text-left text-[13px] font-medium text-[var(--primary)]"
+          type="button"
+        >
           Forgot Password?
         </button>
       </section>
 
-      <p className="login-footer">Raj Vedanta School</p>
+      <p className="m-0 text-[11px] text-slate-400">Raj Vedanta School</p>
     </main>
   );
 }

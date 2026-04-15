@@ -68,7 +68,7 @@ export function AssignedDataView({
 
   return (
     <main
-      className="view-content assigned-page"
+      className="flex h-[calc(100vh-56px)] flex-col gap-3.5 overflow-hidden px-6 py-6 max-[1024px]:h-auto max-[1024px]:overflow-visible"
       style={{
         "--active-stage": theme.color,
         "--active-stage-soft": theme.soft,
@@ -85,9 +85,11 @@ export function AssignedDataView({
         stageThemes={stageThemes}
       />
 
-      <section className="assigned-note-row">
-        <p>{`${activeStage} queue`}</p>
-        <span className="assigned-progress">{`${enabledCount} / ${displayedRows.length}`}</span>
+      <section className="flex items-center justify-between max-[700px]:flex-col max-[700px]:items-start max-[700px]:gap-2">
+        <p className="m-0 text-[15px] font-medium text-gray-500">{`${activeStage} queue`}</p>
+        <span className="rounded-xl bg-[var(--active-stage-soft)] px-3 py-1 text-[22px] font-bold text-[var(--active-stage)] max-[1024px]:text-lg">
+          {`${enabledCount} / ${displayedRows.length}`}
+        </span>
       </section>
 
       <ActiveTabComponent

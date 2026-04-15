@@ -82,22 +82,45 @@ export default function ChangePassword({ onComplete, onSkip }) {
   };
 
   return (
-    <main className="password-page" aria-label="Change password page">
-      <section className="password-modal" role="dialog" aria-modal="true">
-        <header className="followup-header password-header">
-          <img src={RVSLogo} alt="RVS Logo" className="password-logo" />
+    <main
+      className="grid min-h-screen place-items-center bg-[linear-gradient(135deg,#eff6ff_0%,#ffffff_72%)] px-5 py-8"
+      aria-label="Change password page"
+    >
+      <section
+        className="w-full max-w-[520px] overflow-hidden rounded-xl bg-white shadow-[0_12px_36px_rgba(0,0,0,0.18)]"
+        role="dialog"
+        aria-modal="true"
+      >
+        <header className="flex min-h-[76px] items-center justify-between gap-3 px-6 py-3">
+          <img
+            src={RVSLogo}
+            alt="RVS Logo"
+            className="h-[58px] w-[58px] shrink-0 object-contain"
+          />
           <div>
-            <h2>
+            <h2 className="m-0 inline-flex items-center gap-2 text-lg font-semibold text-slate-900">
               <LockSimple size={20} weight="regular" /> Change Your Password
             </h2>
-            <p>For account safety, update your password before you continue.</p>
+            <p className="mt-1 text-[13px] text-slate-500">
+              For account safety, update your password before you continue.
+            </p>
           </div>
         </header>
 
-        <form className="password-body" onSubmit={handleSubmit} noValidate>
-          <label htmlFor="old-password">Old Password</label>
-          <div className="input-wrap">
+        <form
+          className="flex flex-col gap-2.5 px-6 pb-5"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <label
+            htmlFor="old-password"
+            className="text-[13px] font-medium text-slate-700"
+          >
+            Old Password
+          </label>
+          <div className="flex h-11 items-center gap-2.5 rounded-md border border-[var(--border)] px-3 focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]">
             <input
+              className="w-full border-0 bg-transparent text-[var(--body)] outline-0"
               id="old-password"
               name="oldPassword"
               type="password"
@@ -108,9 +131,15 @@ export default function ChangePassword({ onComplete, onSkip }) {
             />
           </div>
 
-          <label htmlFor="new-password">New Password</label>
-          <div className="input-wrap">
+          <label
+            htmlFor="new-password"
+            className="text-[13px] font-medium text-slate-700"
+          >
+            New Password
+          </label>
+          <div className="flex h-11 items-center gap-2.5 rounded-md border border-[var(--border)] px-3 focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]">
             <input
+              className="w-full border-0 bg-transparent text-[var(--body)] outline-0"
               id="new-password"
               name="newPassword"
               type="password"
@@ -121,9 +150,15 @@ export default function ChangePassword({ onComplete, onSkip }) {
             />
           </div>
 
-          <label htmlFor="confirm-password">Confirm Password</label>
-          <div className="input-wrap">
+          <label
+            htmlFor="confirm-password"
+            className="text-[13px] font-medium text-slate-700"
+          >
+            Confirm Password
+          </label>
+          <div className="flex h-11 items-center gap-2.5 rounded-md border border-[var(--border)] px-3 focus-within:border-[var(--primary)] focus-within:shadow-[0_0_0_3px_rgba(37,99,235,0.15)]">
             <input
+              className="w-full border-0 bg-transparent text-[var(--body)] outline-0"
               id="confirm-password"
               name="confirmPassword"
               type="password"
@@ -135,20 +170,32 @@ export default function ChangePassword({ onComplete, onSkip }) {
           </div>
 
           <section
-            className="password-rules"
+            className="mt-1 rounded-lg border border-blue-100 bg-[#f8fbff] p-3"
             aria-label="Password strength rules"
           >
-            <h3>Password must include:</h3>
-            <ul>
+            <h3 className="m-0 text-[13px] font-semibold text-blue-900">
+              Password must include:
+            </h3>
+            <ul className="mt-2 grid list-none gap-1.5 p-0">
               {passwordRules.map((rule) => (
                 <li
                   key={rule.label}
-                  className={rule.valid ? "rule-item valid" : "rule-item"}
+                  className={`inline-flex items-center gap-2 text-xs ${rule.valid ? "text-green-800" : "text-slate-600"}`}
                 >
                   {rule.valid ? (
-                    <Check size={14} weight="bold" aria-hidden="true" />
+                    <Check
+                      className="text-green-600"
+                      size={14}
+                      weight="bold"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <X size={14} weight="bold" aria-hidden="true" />
+                    <X
+                      className="text-red-500"
+                      size={14}
+                      weight="bold"
+                      aria-hidden="true"
+                    />
                   )}
                   {rule.label}
                 </li>
@@ -157,16 +204,16 @@ export default function ChangePassword({ onComplete, onSkip }) {
           </section>
 
           {error ? (
-            <div className="callout danger">
-              <p>
+            <div className="mt-2 rounded-md border border-red-200 bg-red-50 p-3">
+              <p className="m-0 inline-flex items-start gap-2 text-xs text-red-900">
                 <WarningCircle size={16} weight="regular" /> {error}
               </p>
             </div>
           ) : null}
 
-          <footer className="password-footer">
+          <footer className="mt-1 flex justify-end gap-2.5">
             <button
-              className="skip-btn"
+              className="min-h-11 cursor-pointer rounded-md border border-[var(--border)] bg-white px-3.5 font-medium text-slate-600 hover:bg-slate-50"
               type="button"
               onClick={() => {
                 if (typeof onSkip === "function") {
@@ -177,7 +224,7 @@ export default function ChangePassword({ onComplete, onSkip }) {
               Skip for Now
             </button>
             <button
-              className="primary-btn"
+              className="min-h-11 min-w-[170px] cursor-pointer rounded-md border-0 bg-[var(--primary)] px-4.5 text-sm font-semibold text-white hover:bg-[var(--primary-dark)] disabled:cursor-not-allowed disabled:opacity-70"
               type="submit"
               disabled={isSubmitting}
             >

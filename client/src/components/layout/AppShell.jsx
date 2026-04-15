@@ -1,20 +1,7 @@
-import {
-  FiBarChart2,
-  FiBox,
-  FiChevronRight,
-  FiList,
-  FiSend,
-} from "react-icons/fi";
+import { Footer } from "./Footer.jsx";
 import { Header } from "./Header.jsx";
 import { LeftSidebar } from "./LeftSidebar.jsx";
-
-const rightRailItems = [
-  { key: "messages", label: "Messages", icon: FiSend },
-  { key: "tasks", label: "Tasks", icon: FiList },
-  { key: "module-a", label: "Module", icon: FiBox },
-  { key: "module-b", label: "Module", icon: FiBox },
-  { key: "module-c", label: "Module", icon: FiBox },
-];
+import { RightSidebar } from "./RightSidebar.jsx";
 
 export function AppShell({
   activeView,
@@ -27,7 +14,7 @@ export function AppShell({
   onGlobalSearch,
 }) {
   return (
-    <div className="dashboard-layout">
+    <div className="relative min-h-screen bg-[var(--bg)]">
       <LeftSidebar
         activeView={activeView}
         setActiveView={setActiveView}
@@ -35,7 +22,7 @@ export function AppShell({
         onFabClick={onFabClick}
       />
 
-      <section className="app-panel">
+      <section className="flex min-h-screen min-w-0 flex-col pt-[72px] pb-[calc(var(--footer-height)+8px)] ml-[var(--sidebar-width)] mr-[var(--quickbar-width)] max-[1024px]:min-h-auto max-[1024px]:mr-0 max-[1024px]:ml-0 max-[1024px]:pt-0">
         <Header
           onAddNewLead={onFabClick}
           onBellClick={onBellClick}
@@ -44,33 +31,9 @@ export function AppShell({
         {children}
       </section>
 
-      <aside className="right-quickbar" aria-label="Quick actions">
-        <div className="quickbar-stack">
-          {rightRailItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.key}
-                className="quickbar-btn"
-                type="button"
-                aria-label={item.label}
-                title={item.label}
-              >
-                <Icon size={20} aria-hidden="true" />
-              </button>
-            );
-          })}
-        </div>
+      <RightSidebar />
 
-        <button
-          className="quickbar-btn quickbar-collapse"
-          type="button"
-          aria-label="Collapse quick actions"
-          title="Collapse"
-        >
-          <FiChevronRight size={20} aria-hidden="true" />
-        </button>
-      </aside>
+      <Footer />
     </div>
   );
 }
