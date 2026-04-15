@@ -13,8 +13,8 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
   const [globalSearch, setGlobalSearch] = useState("");
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#26344d] bg-[linear-gradient(90deg,#1f2e46_0%,#1d2a40_100%)] px-[18px] max-[1024px]:static max-[1024px]:left-auto max-[1024px]:right-auto max-[1024px]:min-h-[60px] max-[1024px]:px-4 max-[700px]:flex-wrap max-[700px]:justify-start max-[700px]:py-2">
-      <div className="flex min-w-0 items-center gap-[18px] max-[1024px]:gap-3 max-[700px]:w-full">
+    <header className="fixed left-0 right-0 top-0 z-50 flex min-h-16 items-center justify-between gap-4 border-b border-[#26344d] bg-[linear-gradient(90deg,#1f2e46_0%,#1d2a40_100%)] px-4.5 max-[1024px]:static max-[1024px]:min-h-15 max-[1024px]:px-4 max-[700px]:flex-wrap max-[700px]:justify-start max-[700px]:py-2">
+      <div className="flex min-w-0 items-center gap-4.5 max-[1024px]:gap-3 max-[700px]:w-full">
         <div className="inline-flex items-center gap-2.5" aria-label="Brand">
           <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl bg-transparent">
             <img src={SchoolLogo} alt="Raj Vedanta School" />
@@ -25,7 +25,7 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
         </div>
 
         <div
-          className="inline-flex min-h-[42px] w-[min(520px,54vw)] items-center gap-2.5 rounded-[10px] border border-white/20 bg-white/10 px-3 text-[#bfcae0] focus-within:border-blue-400/80 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.25)] max-[1024px]:w-[min(420px,50vw)] max-[700px]:w-full"
+          className="inline-flex min-h-10.5 w-[min(520px,54vw)] items-center gap-2.5 rounded-[10px] border border-white/20 bg-white/10 px-3 text-[#bfcae0] focus-within:border-blue-400/80 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.25)] max-[1024px]:w-[min(420px,50vw)] max-[700px]:w-full"
           role="search"
         >
           <FiSearch size={20} aria-hidden="true" />
@@ -43,7 +43,7 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
           />
           <button
             type="button"
-            className="grid h-[26px] w-[26px] cursor-pointer place-items-center border-0 border-l border-white/20 bg-transparent text-[#c9d6eb]"
+            className="grid h-6.5 w-6.5 cursor-pointer place-items-center border-0 border-l border-white/20 bg-transparent text-[#c9d6eb]"
             aria-label="Search filter options"
           >
             <FiChevronDown size={14} aria-hidden="true" />
@@ -63,7 +63,7 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
         </button>
 
         <button
-          className="relative inline-flex h-[38px] w-[38px] cursor-pointer items-center justify-center rounded-[10px] border border-white/15 bg-white/10 text-slate-200 hover:bg-white/15"
+          className="relative inline-flex h-9.5 w-9.5 cursor-pointer items-center justify-center rounded-[10px] border border-white/15 bg-white/10 text-slate-200 hover:bg-white/15"
           type="button"
           aria-label="Notifications"
           onClick={onBellClick}
@@ -76,7 +76,7 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
         </button>
 
         <button
-          className="inline-flex h-[38px] w-[38px] cursor-pointer items-center justify-center rounded-[10px] border border-white/15 bg-white/10 text-slate-200 hover:bg-white/15"
+          className="inline-flex h-9.5 w-9.5 cursor-pointer items-center justify-center rounded-[10px] border border-white/15 bg-white/10 text-slate-200 hover:bg-white/15"
           type="button"
           aria-label="Settings"
         >
