@@ -2923,6 +2923,13 @@ tbody tr:hover {
     0 10px 24px rgba(124, 58, 237, 0.38);
 }
 
+.call-header-section.section-unsuccessful {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 10px 24px rgba(239, 68, 68, 0.38);
+}
+
 .call-close-btn {
   color: white !important;
   width: 42px;

@@ -48,6 +48,7 @@ import { RestrictedCallActionModal } from "./assigned-data/components/NurturingC
 import { VisitSCallActionModal } from "./assigned-data/components/VisitSCallAction.jsx";
 import { VisitCCallaActionModal } from "./assigned-data/components/Visit_CCallaAction.jsx";
 import { FormIssuedCallActionModal } from "./assigned-data/components/FormIssuedCallAction.jsx";
+import { UnsuccessfulCallAction } from "./assigned-data/components/UnsuccessfulCallAction.jsx";
 import { stageTabs } from "./assigned-data/config/stageConfig.jsx";
 
 function DashboardView({
@@ -1869,6 +1870,35 @@ function App() {
             />
           ) : selectedLeadForCall.stage === "Form Issued" ? (
             <FormIssuedCallActionModal
+              lead={selectedLeadForCall}
+              sectionName={selectedLeadForCall.stage}
+              onClose={() => {
+                setCallActionOpen(false);
+                setSelectedLeadForCall(null);
+              }}
+              onSubmit={(callData) => {
+                console.log("Call action submitted:", callData);
+                const selectedStatus = callData.status;
+                const canMoveStage = stageTabs.includes(selectedStatus);
+
+                if (canMoveStage && selectedLeadForCall?.leadId) {
+                  setLeadStageById((state) => ({
+                    ...state,
+                    [selectedLeadForCall.leadId]: selectedStatus,
+                  }));
+                }
+
+                if (selectedLeadForCall?.stage === "Lead") {
+                  setMarkedCallLeadIds((state) => {
+                    if (state.includes(selectedLeadForCall.leadId))
+                      return state;
+                    return [...state, selectedLeadForCall.leadId];
+                  });
+                }
+              }}
+            />
+          ) : selectedLeadForCall.stage === "Unsuccessful" ? (
+            <UnsuccessfulCallAction
               lead={selectedLeadForCall}
               sectionName={selectedLeadForCall.stage}
               onClose={() => {
