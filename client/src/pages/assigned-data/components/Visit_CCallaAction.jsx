@@ -168,7 +168,9 @@ export function VisitCCallaActionModal({
               </div>
             </div>
             <button
-              className="icon-btn call-close-btn"
+              className="p-2 rounded-full text-white bg-red-500 font-bold
+hover:bg-gray-100 hover:text-gray-700
+transition-all duration-200 active:scale-90"
               type="button"
               aria-label="Close call action modal"
               onClick={onClose}
@@ -331,11 +333,10 @@ export function VisitCCallaActionModal({
                           <button
                             key={tag}
                             type="button"
-                            className={
-                              callForm.tag === tag
-                                ? "dropdown-item active"
-                                : "dropdown-item"
-                            }
+                            className={`
+w-full text-left px-3 py-2 rounded-md transition
+${callForm.tag === tag ? "bg-purple-600 text-white" : "hover:bg-gray-100"}
+`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleTagSelect(tag);
@@ -371,12 +372,26 @@ export function VisitCCallaActionModal({
                       <button
                         key={status}
                         type="button"
-                        className={
-                          `status-badge status-badge-${status
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}` +
-                          (selectedStatus === status ? " active" : "")
-                        }
+                        className={`
+px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+hover:scale-105 active:scale-95
+${
+  status === "Form Issued"
+    ? selectedStatus === status
+      ? "bg-purple-600 text-white shadow-md"
+      : "bg-purple-100 text-purple-600 hover:bg-purple-200"
+    : status === "Nurturing"
+      ? selectedStatus === status
+        ? "bg-amber-500 text-white shadow-md"
+        : "bg-amber-100 text-amber-600 hover:bg-amber-200"
+      : status === "Dead Leads"
+        ? selectedStatus === status
+          ? "bg-gray-700 text-white shadow-md"
+          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+        : ""
+}
+${statusLocked ? "opacity-50 cursor-not-allowed hover:scale-100" : ""}
+`}
                         disabled={statusLocked}
                         onClick={(e) => {
                           e.preventDefault();
@@ -474,10 +489,23 @@ export function VisitCCallaActionModal({
               </div>
 
               <footer className="call-action-footer">
-                <button className="cancel-btn" type="button" onClick={onClose}>
+                <button
+                  className="px-5 py-2.5 rounded-lg font-medium 
+bg-gray-100 text-gray-700 
+hover:bg-gray-200 
+transition-all duration-200"
+                  type="button"
+                  onClick={onClose}
+                >
                   Cancel
                 </button>
-                <button className="submit-btn" type="submit">
+                <button
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white 
+bg-gradient-to-r from-purple-600 to-purple-700 
+hover:from-purple-700 hover:to-purple-800 
+transition-all duration-200 shadow-md hover:shadow-lg"
+                  type="submit"
+                >
                   <Check size={16} weight="bold" /> Save & Submit
                 </button>
               </footer>
@@ -489,7 +517,12 @@ export function VisitCCallaActionModal({
                 <div className="sort-selector">
                   <button
                     type="button"
-                    className={sortOrder === "latest" ? "active" : ""}
+                    className={`px-3 py-1.5 rounded-md text-sm transition
+${
+  sortOrder === "latest"
+    ? "bg-blue-600 text-white"
+    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+}`}
                     onClick={() => setSortOrder("latest")}
                   >
                     Latest
