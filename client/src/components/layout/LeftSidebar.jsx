@@ -1,5 +1,6 @@
 import {
   FiBarChart2,
+  FiClock,
   FiColumns,
   FiGrid,
   FiList,
@@ -10,6 +11,7 @@ import {
 const navItems = [
   { key: "dashboard", label: "Dashboard", icon: FiGrid },
   { key: "pipeline", label: "Assigned Data", icon: FiColumns },
+  { key: "follow-ups", label: "Follow-Up's", icon: FiClock },
   // { key: "table", label: "Leads Table", icon: FiList },
   { key: "reports", label: "My Reports", icon: FiBarChart2 },
 ];

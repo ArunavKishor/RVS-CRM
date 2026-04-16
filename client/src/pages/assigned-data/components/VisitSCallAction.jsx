@@ -15,22 +15,30 @@ import {
 } from "@phosphor-icons/react";
 import { FormField } from "../../../components/common/Controls.jsx";
 import { LegacyTailwindMapper } from "../../../components/common/LegacyTailwindMapper.jsx";
+import { LeadLifecycleTrail } from "./LifeCycle.jsx";
 
 const callTags = [
   "Visit completed",
   "Parent cancelled visit",
   "Call not connected",
+  "Unable to come",
   "Not interested",
   "Already joined",
   "Other",
 ];
 
-const callStatuses = ["Visit Completed", "Unsuccessful", "Dead Leads"];
+const callStatuses = [
+  "Visit Completed",
+  "Unsuccessful",
+  "Dead Leads",
+  "Nurturing",
+];
 
 const autoStatusByTag = {
   "Visit completed": "Visit Completed",
   "Parent cancelled visit": "Unsuccessful",
   "Call not connected": "Unsuccessful",
+  "Unable to come": "Nurturing",
   "Not interested": "Dead Leads",
   "Already joined": "Dead Leads",
 };
@@ -165,21 +173,32 @@ export function VisitSCallActionModal({
                 {sectionName ? `${sectionName} Section` : "Assigned Data"}
               </div>
             </div>
+
+            <LeadLifecycleTrail
+              studentName={lead?.student}
+              sectionName={sectionName}
+            />
+
             <button
-              className="icon-btn call-close-btn"
               type="button"
               aria-label="Close call action modal"
               onClick={onClose}
+              className="p-2 rounded-full text-white bg-red-500 font-extrabold
+  hover:bg-gray-100 hover:text-gray-700 
+  transition-all duration-200 
+  active:scale-90"
             >
               <X size={20} weight="regular" />
             </button>
           </header>
 
-          <div className="call-action-tabs">
+          <div className="call-action-tabs grid grid-cols-2 gap-2">
             <button
-              className={
-                activeTab === "student-info" ? "tab-btn active" : "tab-btn"
-              }
+              className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                activeTab === "student-info"
+                  ? "bg-blue-600 text-white shadow"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
               type="button"
               onClick={() => setActiveTab("student-info")}
             >
@@ -187,9 +206,11 @@ export function VisitSCallActionModal({
               Student Information
             </button>
             <button
-              className={
-                activeTab === "previous-logs" ? "tab-btn active" : "tab-btn"
-              }
+              className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                activeTab === "previous-logs"
+                  ? "bg-blue-600 text-white shadow"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
               type="button"
               onClick={() => setActiveTab("previous-logs")}
             >
@@ -303,7 +324,7 @@ export function VisitSCallActionModal({
                   <div className="tag-dropdown-wrapper">
                     <button
                       type="button"
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-gray-300 bg-white hover:border-blue-500 hover:ring-1 hover:ring-blue-200 transition"
+                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                       onClick={(e) => {
                         e.preventDefault();
                         setShowTagDropdown(!showTagDropdown);
@@ -329,14 +350,11 @@ export function VisitSCallActionModal({
                           <button
                             key={tag}
                             type="button"
-                            className={`
-  w-full text-left px-3 py-2 rounded-md text-sm transition
-  ${
-    callForm.tag === tag
-      ? "bg-blue-600 text-white"
-      : "text-gray-700 hover:bg-blue-50"
-  }
-`}
+                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 ${
+                              callForm.tag === tag
+                                ? "bg-blue-600 text-white"
+                                : "text-gray-700 hover:bg-blue-100"
+                            }`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleTagSelect(tag);
@@ -356,7 +374,7 @@ export function VisitSCallActionModal({
                   label="2. Update Status"
                   hint={
                     statusLocked
-                      ? `Auto-selected from call outcome: ${autoStatusByTag[callForm.tag]}`
+                      ? `Auto-selected from call outcome: ${autoStatusByTag[callForm.tag]}. Change section 1 to unlock.`
                       : "Select one target tab for this lead."
                   }
                   required
@@ -372,18 +390,30 @@ export function VisitSCallActionModal({
                       <button
                         key={status}
                         type="button"
-                        className={`
-  px-3 py-1.5 rounded-full text-sm border transition
-  ${
-    selectedStatus === status
-      ? "bg-blue-600 text-white border-blue-600"
-      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-  }
-  ${
-    statusLocked
-      ? "opacity-50 cursor-not-allowed hover:bg-gray-100 hover:border-gray-300"
-      : "cursor-pointer"
-  }
+                        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
+${statusLocked ? "" : "hover:scale-105 active:scale-95"}
+${
+  statusLocked && selectedStatus !== status
+    ? "bg-gray-200 text-gray-500"
+    : status === "Visit Completed"
+      ? selectedStatus === status
+        ? "bg-green-600 text-white shadow"
+        : "bg-green-100 text-green-600 hover:bg-green-200"
+      : status === "Unsuccessful"
+        ? selectedStatus === status
+          ? "bg-red-600 text-white shadow"
+          : "bg-red-100 text-red-600 hover:bg-red-200"
+        : status === "Dead Leads"
+          ? selectedStatus === status
+            ? "bg-gray-700 text-white shadow"
+            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          : status === "Nurturing"
+            ? selectedStatus === status
+              ? "bg-blue-600 text-white shadow"
+              : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+            : ""
+}
+${statusLocked ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
 `}
                         disabled={statusLocked}
                         onClick={(e) => {
@@ -483,14 +513,14 @@ export function VisitSCallActionModal({
 
               <footer className="call-action-footer">
                 <button
-                  className="px-4 py-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+                  className="px-5 py-2.5 rounded-lg font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-all duration-200"
                   type="button"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-700 transition"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg"
                   type="submit"
                 >
                   <Check size={16} weight="bold" /> Save & Submit
@@ -504,14 +534,22 @@ export function VisitSCallActionModal({
                 <div className="sort-selector">
                   <button
                     type="button"
-                    className={sortOrder === "latest" ? "active" : ""}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition ${
+                      sortOrder === "latest"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
                     onClick={() => setSortOrder("latest")}
                   >
                     Latest
                   </button>
                   <button
                     type="button"
-                    className={sortOrder === "oldest" ? "active" : ""}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition ${
+                      sortOrder === "oldest"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
                     onClick={() => setSortOrder("oldest")}
                   >
                     Oldest

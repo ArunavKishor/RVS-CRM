@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { FormField } from "../../../components/common/Controls.jsx";
 import { LegacyTailwindMapper } from "../../../components/common/LegacyTailwindMapper.jsx";
+import { LeadLifecycleTrail } from "./LifeCycle.jsx";
 
 const callTags = [
   "Form shared",
@@ -167,6 +168,12 @@ export function VisitCCallaActionModal({
                 {sectionName ? `${sectionName} Section` : "Assigned Data"}
               </div>
             </div>
+
+            <LeadLifecycleTrail
+              studentName={lead?.student}
+              sectionName={sectionName}
+            />
+
             <button
               className="p-2 rounded-full text-white bg-red-500 font-bold
 hover:bg-gray-100 hover:text-gray-700

@@ -33,7 +33,6 @@ import {
   ClipboardText,
 } from "@phosphor-icons/react";
 import { AppShell } from "../components/layout/AppShell.jsx";
-import { NotificationsPanel } from "../components/layout/NotificationsPanel.jsx";
 import {
   FilterSelect,
   FormField,
@@ -51,6 +50,7 @@ import { VisitCCallaActionModal } from "./assigned-data/components/Visit_CCallaA
 import { FormIssuedCallActionModal } from "./assigned-data/components/FormIssuedCallAction.jsx";
 import { UnsuccessfulCallAction } from "./assigned-data/components/UnsuccessfulCallAction.jsx";
 import { stageTabs } from "./assigned-data/config/stageConfig.jsx";
+import { FollowUpsWindowView } from "./FollowUps.jsx";
 import Login from "./Login.jsx";
 import ChangePassword from "./ChangePassword.jsx";
 
@@ -105,11 +105,7 @@ const rowStatusTone = {
   "status-green": "bg-green-100 text-green-700",
 };
 
-function DashboardView({
-  formattedDate,
-  notificationsOpen,
-  onCloseNotifications,
-}) {
+function DashboardView({ formattedDate }) {
   return (
     <div className="relative min-h-[calc(100vh-56px)]">
       <main className="flex flex-col gap-5 px-6 py-6 max-[1024px]:px-4">
@@ -227,10 +223,6 @@ function DashboardView({
           </article>
         </section>
       </main>
-
-      {notificationsOpen ? (
-        <NotificationsPanel onClose={onCloseNotifications} />
-      ) : null}
     </div>
   );
 }
@@ -1695,11 +1687,12 @@ function App() {
   const [visitOpen, setVisitOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [lostOpen, setLostOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(true);
   const [callActionOpen, setCallActionOpen] = useState(false);
   const [selectedLeadForCall, setSelectedLeadForCall] = useState(null);
   const [markedCallLeadIds, setMarkedCallLeadIds] = useState([]);
   const [leadStageById, setLeadStageById] = useState({});
+  const [followUpScheduleByLeadId, setFollowUpScheduleByLeadId] = useState({});
+  const [dismissedFollowUpLeadIds, setDismissedFollowUpLeadIds] = useState([]);
 
   const formattedDate = useMemo(() => {
     const date = new Date("2026-04-13T12:30:00");
@@ -1716,6 +1709,92 @@ function App() {
       window.scrollTo(0, 0);
     });
   }, [activeView]);
+
+  const openCallActionModal = (lead) => {
+    setSelectedLeadForCall(lead);
+    setCallActionOpen(true);
+  };
+
+  const closeCallActionModal = () => {
+    setCallActionOpen(false);
+    setSelectedLeadForCall(null);
+  };
+
+  const handleCallActionSubmit = (callData) => {
+    console.log("Call action submitted:", callData);
+    const selectedStatus = callData.status;
+    const canMoveStage = stageTabs.includes(selectedStatus);
+    const followUpDateTime = callData.followUpDateTime?.trim() || "";
+    const leadId = selectedLeadForCall?.leadId;
+
+    if (canMoveStage && selectedLeadForCall?.leadId) {
+      setLeadStageById((state) => ({
+        ...state,
+        [selectedLeadForCall.leadId]: selectedStatus,
+      }));
+    }
+
+    if (selectedLeadForCall?.stage === "Lead") {
+      setMarkedCallLeadIds((state) => {
+        if (state.includes(selectedLeadForCall.leadId)) return state;
+        return [...state, selectedLeadForCall.leadId];
+      });
+    }
+
+    if (leadId) {
+      setDismissedFollowUpLeadIds((state) => {
+        if (followUpDateTime) {
+          return state.filter((id) => id !== leadId);
+        }
+
+        if (state.includes(leadId)) {
+          return state;
+        }
+
+        return [...state, leadId];
+      });
+
+      setFollowUpScheduleByLeadId((state) => {
+        const nextState = { ...state };
+
+        if (followUpDateTime) {
+          nextState[leadId] = followUpDateTime;
+        } else {
+          delete nextState[leadId];
+        }
+
+        return nextState;
+      });
+    }
+  };
+
+  const renderCallActionModal = () => {
+    if (!callActionOpen || !selectedLeadForCall) {
+      return null;
+    }
+
+    const ModalComponent =
+      selectedLeadForCall.stage === "Lead"
+        ? LeadCallActionModal
+        : selectedLeadForCall.stage === "Visit Scheduled"
+          ? VisitSCallActionModal
+          : selectedLeadForCall.stage === "Visit Completed"
+            ? VisitCCallaActionModal
+            : selectedLeadForCall.stage === "Form Issued"
+              ? FormIssuedCallActionModal
+              : selectedLeadForCall.stage === "Unsuccessful"
+                ? UnsuccessfulCallAction
+                : RestrictedCallActionModal;
+
+    return (
+      <ModalComponent
+        lead={selectedLeadForCall}
+        sectionName={selectedLeadForCall.stage}
+        onClose={closeCallActionModal}
+        onSubmit={handleCallActionSubmit}
+      />
+    );
+  };
 
   if (!loggedIn) {
     return (
@@ -1797,10 +1876,6 @@ function App() {
           activeView="pipeline"
           setActiveView={setActiveView}
           breadcrumb="Assigned Data"
-          onBellClick={() => {
-            setNotificationsOpen(true);
-            setActiveView("dashboard");
-          }}
           onFabClick={() => {
             setLeadEntryMode("default");
             setActiveView("new-lead");
@@ -1809,189 +1884,10 @@ function App() {
           <AssignedDataView
             markedCallLeadIds={markedCallLeadIds}
             leadStageById={leadStageById}
-            onCallAction={(lead) => {
-              setSelectedLeadForCall(lead);
-              setCallActionOpen(true);
-            }}
+            onCallAction={openCallActionModal}
           />
         </AppShell>
-        {callActionOpen && selectedLeadForCall ? (
-          selectedLeadForCall.stage === "Lead" ? (
-            <LeadCallActionModal
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          ) : selectedLeadForCall.stage === "Visit Scheduled" ? (
-            <VisitSCallActionModal
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          ) : selectedLeadForCall.stage === "Visit Completed" ? (
-            <VisitCCallaActionModal
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          ) : selectedLeadForCall.stage === "Form Issued" ? (
-            <FormIssuedCallActionModal
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          ) : selectedLeadForCall.stage === "Unsuccessful" ? (
-            <UnsuccessfulCallAction
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          ) : (
-            <RestrictedCallActionModal
-              lead={selectedLeadForCall}
-              sectionName={selectedLeadForCall.stage}
-              onClose={() => {
-                setCallActionOpen(false);
-                setSelectedLeadForCall(null);
-              }}
-              onSubmit={(callData) => {
-                console.log("Call action submitted:", callData);
-                const selectedStatus = callData.status;
-                const canMoveStage = stageTabs.includes(selectedStatus);
-
-                if (canMoveStage && selectedLeadForCall?.leadId) {
-                  setLeadStageById((state) => ({
-                    ...state,
-                    [selectedLeadForCall.leadId]: selectedStatus,
-                  }));
-                }
-
-                if (selectedLeadForCall?.stage === "Lead") {
-                  setMarkedCallLeadIds((state) => {
-                    if (state.includes(selectedLeadForCall.leadId))
-                      return state;
-                    return [...state, selectedLeadForCall.leadId];
-                  });
-                }
-              }}
-            />
-          )
-        ) : null}
+        {renderCallActionModal()}
       </>
     );
   }
@@ -2002,10 +1898,6 @@ function App() {
         activeView="table"
         setActiveView={setActiveView}
         breadcrumb="My Leads · Table View"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
         onFabClick={() => {
           setLeadEntryMode("default");
           setActiveView("new-lead");
@@ -2022,10 +1914,6 @@ function App() {
         activeView="new-lead"
         setActiveView={setActiveView}
         breadcrumb="Assigned Data · Add New Lead"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
         showFab={false}
       >
         <NewLeadView
@@ -2043,10 +1931,6 @@ function App() {
         activeView="reports"
         setActiveView={setActiveView}
         breadcrumb="My Reports · Priya Sharma"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
         onFabClick={() => {
           setLeadEntryMode("default");
           setActiveView("new-lead");
@@ -2060,16 +1944,36 @@ function App() {
     );
   }
 
+  if (activeView === "follow-ups") {
+    return (
+      <>
+        <AppShell
+          activeView="follow-ups"
+          setActiveView={setActiveView}
+          breadcrumb="Follow-Up's"
+          onFabClick={() => {
+            setLeadEntryMode("default");
+            setActiveView("new-lead");
+          }}
+        >
+          <FollowUpsWindowView
+            leadStageById={leadStageById}
+            followUpScheduleByLeadId={followUpScheduleByLeadId}
+            dismissedFollowUpLeadIds={dismissedFollowUpLeadIds}
+            onCallAction={openCallActionModal}
+          />
+        </AppShell>
+        {renderCallActionModal()}
+      </>
+    );
+  }
+
   if (activeView === "mobile-dashboard") {
     return (
       <AppShell
         activeView="reports"
         setActiveView={setActiveView}
         breadcrumb="Mobile Preview · Dashboard"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
       >
         <MobileDashboardView />
       </AppShell>
@@ -2082,10 +1986,6 @@ function App() {
         activeView="reports"
         setActiveView={setActiveView}
         breadcrumb="Mobile Preview · Assigned Data"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
       >
         <MobileKanbanView />
       </AppShell>
@@ -2098,10 +1998,6 @@ function App() {
         activeView="table"
         setActiveView={setActiveView}
         breadcrumb="My Leads > Aarav Mehta · LM-0247"
-        onBellClick={() => {
-          setNotificationsOpen(true);
-          setActiveView("dashboard");
-        }}
         onFabClick={() => {
           setLeadEntryMode("default");
           setActiveView("new-lead");
@@ -2130,17 +2026,12 @@ function App() {
       activeView="dashboard"
       setActiveView={setActiveView}
       breadcrumb="Dashboard"
-      onBellClick={() => setNotificationsOpen((state) => !state)}
       onFabClick={() => {
         setLeadEntryMode("default");
         setActiveView("new-lead");
       }}
     >
-      <DashboardView
-        formattedDate={formattedDate}
-        notificationsOpen={notificationsOpen}
-        onCloseNotifications={() => setNotificationsOpen(false)}
-      />
+      <DashboardView formattedDate={formattedDate} />
     </AppShell>
   );
 }

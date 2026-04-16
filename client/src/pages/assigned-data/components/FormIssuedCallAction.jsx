@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { FormField } from "../../../components/common/Controls.jsx";
 import { LegacyTailwindMapper } from "../../../components/common/LegacyTailwindMapper.jsx";
+import { LeadLifecycleTrail } from "./LifeCycle.jsx";
 
 const callTags = [
   "Form submitted",
@@ -164,12 +165,18 @@ export function FormIssuedCallActionModal({
                 </p>
               </div>
               <div
-  className="px-3 py-1.5 rounded-full text-xs font-semibold text-white"
-  style={{ backgroundColor: "#9333ea" }}
->
-  {sectionName ? `${sectionName} Section` : "Assigned Data"}
-</div>
+                className="px-3 py-1.5 rounded-full text-xs font-semibold text-white"
+                style={{ backgroundColor: "#9333ea" }}
+              >
+                {sectionName ? `${sectionName} Section` : "Assigned Data"}
+              </div>
             </div>
+
+            <LeadLifecycleTrail
+              studentName={lead?.student}
+              sectionName={sectionName}
+            />
+
             <button
               type="button"
               aria-label="Close call action modal"

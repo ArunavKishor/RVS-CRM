@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { FormField } from "../../../components/common/Controls.jsx";
 import { LegacyTailwindMapper } from "../../../components/common/LegacyTailwindMapper.jsx";
+import { LeadLifecycleTrail } from "./LifeCycle.jsx";
 
 const callTags = [
   "Call not connected",
@@ -302,6 +303,12 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
                 {sectionName ? `${sectionName} Section` : "Assigned Data"}
               </div>
             </div>
+
+            <LeadLifecycleTrail
+              studentName={lead?.student}
+              sectionName={sectionName}
+            />
+
             <button
               type="button"
               aria-label="Close call action modal"
@@ -612,11 +619,16 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
                           >
                             <button
                               type="button"
-                              className={
-                                callForm.pickupNeed === "no"
-                                  ? "pickup-choice active"
-                                  : "pickup-choice"
-                              }
+                              className={`
+px-4 py-1.5 rounded-full text-sm font-medium transition
+${
+  callForm.pickupNeed === ""
+    ? "bg-red-100 text-red-700 hover:bg-red-200"
+    : callForm.pickupNeed === "no"
+      ? "bg-red-600 text-white"
+      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+}
+`}
                               onClick={() => {
                                 setPickupInfoSaved(false);
                                 setCallForm((state) => ({
@@ -636,11 +648,16 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
                             </button>
                             <button
                               type="button"
-                              className={
-                                callForm.pickupNeed === "yes"
-                                  ? "pickup-choice active"
-                                  : "pickup-choice"
-                              }
+                              className={`
+px-4 py-1.5 rounded-full text-sm font-medium transition
+${
+  callForm.pickupNeed === ""
+    ? "bg-green-100 text-green-700 hover:bg-green-200"
+    : callForm.pickupNeed === "yes"
+      ? "bg-green-600 text-white"
+      : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+}
+`}
                               onClick={() => {
                                 setPickupInfoSaved(false);
                                 setCallForm((state) => ({

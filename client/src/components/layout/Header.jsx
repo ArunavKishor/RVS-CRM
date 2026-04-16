@@ -9,7 +9,12 @@ import {
 } from "react-icons/fi";
 import SchoolLogo from "../../assets/School.png";
 
-export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
+export function Header({
+  onAddNewLead,
+  onBellClick,
+  onGlobalSearch,
+  onProfileClick,
+}) {
   const [globalSearch, setGlobalSearch] = useState("");
 
   return (
@@ -87,6 +92,7 @@ export function Header({ onAddNewLead, onBellClick, onGlobalSearch }) {
           className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border-0 bg-[linear-gradient(135deg,#facc15_0%,#f59e0b_100%)] text-slate-800"
           type="button"
           aria-label="Profile"
+          onClick={onProfileClick}
         >
           <FiUser size={18} aria-hidden="true" />
         </button>
