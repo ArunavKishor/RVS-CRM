@@ -303,10 +303,13 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
               </div>
             </div>
             <button
-              className="icon-btn call-close-btn"
               type="button"
               aria-label="Close call action modal"
               onClick={onClose}
+              className="p-2 rounded-full text-white bg-red-500 font-extrabold
+  hover:bg-gray-100 hover:text-gray-700 
+  transition-all duration-200 
+  active:scale-90"
             >
               <X size={20} weight="regular" />
             </button>
@@ -466,11 +469,10 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
                           <button
                             key={tag}
                             type="button"
-                            className={
-                              callForm.tag === tag
-                                ? "dropdown-item active"
-                                : "dropdown-item"
-                            }
+                            className={`
+  w-full text-left px-3 py-2 rounded-md transition
+  ${callForm.tag === tag ? "bg-purple-600 text-white" : "hover:bg-gray-100"}
+`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleTagSelect(tag);
@@ -506,12 +508,29 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
                       <button
                         key={status}
                         type="button"
-                        className={
-                          `status-badge status-badge-${status
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}` +
-                          (callForm.status === status ? " active" : "")
-                        }
+                        className={`
+  px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+  hover:scale-105 active:scale-95
+  ${
+    status === "Unsuccessful"
+      ? callForm.status === status
+        ? "bg-red-600 text-white shadow-md"
+        : "bg-red-100 text-red-600 hover:bg-red-200"
+      : status === "Nurturing"
+        ? callForm.status === status
+          ? "bg-amber-500 text-white shadow-md"
+          : "bg-amber-100 text-amber-600 hover:bg-amber-200"
+        : status === "Visit Scheduled"
+          ? callForm.status === status
+            ? "bg-purple-600 text-white shadow-md"
+            : "bg-purple-100 text-purple-600 hover:bg-purple-200"
+          : status === "Dead Leads"
+            ? callForm.status === status
+              ? "bg-gray-700 text-white shadow-md"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            : ""
+  }
+`}
                         disabled={statusLocked}
                         onClick={(e) => {
                           e.preventDefault();
@@ -798,10 +817,23 @@ export function LeadCallActionModal({ onClose, lead, onSubmit, sectionName }) {
               </div>
 
               <footer className="call-action-footer">
-                <button className="cancel-btn" type="button" onClick={onClose}>
+                <button
+                  className="px-5 py-2.5 rounded-lg font-medium 
+bg-gray-100 text-gray-700 
+hover:bg-gray-200 
+transition-all duration-200"
+                  type="button"
+                  onClick={onClose}
+                >
                   Cancel
                 </button>
-                <button className="submit-btn" type="submit">
+                <button
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white 
+bg-gradient-to-r from-blue-600 to-blue-700 
+hover:from-blue-700 hover:to-blue-800 
+transition-all duration-200 shadow-md hover:shadow-lg"
+                  type="submit"
+                >
                   <Check size={16} weight="bold" /> Save & Submit
                 </button>
               </footer>
